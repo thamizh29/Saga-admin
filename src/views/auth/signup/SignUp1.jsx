@@ -10,11 +10,12 @@ const SignUp1 = () => {
   const [user, setuser] = useState('');
   const [mobile, setmobile] = useState('');
   const [password, setpassword] = useState('');
+  const [company, setcompany] = useState('');
   const [shouldRedirect,setshouldRedirect] =useState(false)
   const navigate = useNavigate()
   const handleSignup = async (e) => {
     e.preventDefault()
-    const url = `http://192.168.1.18:8000/api/method/sagasuite.customer_api.insert_value?customer_name=${user}&customer_type=&email_id=${email}&password=${password}&status=&premium_customer=&phone_number_verified=&email_id_verified=&subscription_plan=`;
+    const url = `http://192.168.1.18:8000/api/method/sagasuite.customer_api.insert_value?customer_name=${user}&company_name=${company}&customer_type=&email_id=${email}&password=${password}&status=&premium_customer=&phone_number_verified=&email_id_verified=&subscription_plan=`;
     try {
       const result = await axios.post(url);
       if (result.data.message[0] === "This mail id was already exist please go to login page") {
@@ -54,6 +55,9 @@ sessionStorage.setItem('email',email);
                     <input type="name" className="form-control" onChange={(e) => (setuser(e.target.value))} placeholder="User name" required />
                   </div>
                   <div className="input-group mb-4">
+                    <input type="name" className="form-control" onChange={(e) => (setcompany(e.target.value))} placeholder="Company name" required />
+                  </div>
+                  <div className="input-group mb-4">
                     <input type="email" className="form-control" onChange={(e) => (setemail(e.target.value))} placeholder="Email address" required />
                   </div>
                   <div className="input-group mb-4">
@@ -63,7 +67,7 @@ sessionStorage.setItem('email',email);
                     <input type="password" className="form-control" onChange={(e) => (setpassword(e.target.value))} placeholder="Password" required />
                   </div>
                   <div className="input-group mb-4">
-                    <input type="password" className="form-control" onChange={(e) => (setpassword(e.target.value))} placeholder="Confirm Password" required />
+                    <input type="password" className="form-control" placeholder="Confirm Password" required />
                   </div>
                   <button type='submit' className="btn btn-primary mb-4">Sign up</button>
                   </form>

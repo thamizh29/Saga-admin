@@ -1,10 +1,12 @@
 import React from 'react';
 import { Row, Col, Card, Form, Button, InputGroup, FormControl, DropdownButton, Dropdown } from 'react-bootstrap';
 import { useState } from 'react';
+import axios from 'axios';
 export default function AddDomain(){
   const [data, setdata] = useState('');
-    const email = sessionStorage.getItem('email')
+    const email = sessionStorage.getItem('email');
     const handledomain = async (e) => {
+      e.preventDefault();
         const url = `http://192.168.1.18:8000/api/method/sagasuite.dom_name_api.insert_value?domain_name=${data}&user_name=${email}`;
         try {
             const result = await axios.post(url);
@@ -27,7 +29,7 @@ export default function AddDomain(){
         <Col sm={12}>
           <Card>
             <Card.Header>
-              <Card.Title as="h5">Add Domain</Card.Title>
+              <Card.Title as="h5">Domains</Card.Title>
             </Card.Header>
             <Card.Body>
               <Row>

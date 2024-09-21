@@ -14,7 +14,7 @@ const menuItems = {
           title: 'Saga admin',
           type: 'item',
           icon: 'feather icon-home',
-          color:'primary',
+          color: 'primary',
           url: '/dashboard'
         }
       ]
@@ -67,19 +67,25 @@ const menuItems = {
               type: 'item',
               icon: 'feather icon-plus-circle',
               url: '/email/addemail'
-            },
-            {
-              id: 'table',
-              title: 'View Email',
-              type: 'item',
-              icon: 'feather icon-eye',
-              url: '/email/viewemail'
             }
-
           ]
+        },
+        {
+          id: 'component3',
+          title: 'Users',
+          type: 'item',
+          icon: 'feather icon-user',
+          url: '/email/users'
+        },
+        {
+          id: 'component3',
+          title: 'groups',
+          type: 'item',
+          icon: 'feather icon-users',
+          url: ''
         }
       ]
-    }, 
+    },
     {
       id: 'ui-forms2',
       title: 'Plans',
@@ -90,7 +96,7 @@ const menuItems = {
           id: 'component5',
           title: 'Subcription',
           type: 'item',
-          icon: 'feather icon-dollar-sign',
+          icon: 'feather icon-credit-card',
           url: '/plans'
         }
       ]
@@ -106,6 +112,21 @@ const menuItems = {
           title: 'Profile',
           type: 'item',
           icon: 'feather icon-user',
+          url: '/profile'
+        }
+      ]
+    },
+     {
+      id: 'ui-forms3',
+      title: 'Security',
+      type: 'group',
+      icon: 'icon-group',
+      children: [
+        {
+          id: 'component3',
+          title: 'Security',
+          type: 'item',
+          icon: 'feather icon-shield',
           url: ''
         }
       ]

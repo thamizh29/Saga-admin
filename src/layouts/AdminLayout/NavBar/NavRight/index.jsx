@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { Card, ListGroup, Dropdown } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link , NavLink } from 'react-router-dom';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
 import avatar1 from '../../../../assets/images/user/avatar-1.jpg';
 
 const NavRight = () => {
   const user = sessionStorage.getItem('email')
+  const handleLogout = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+};
   return (
     <React.Fragment>
       <ListGroup as="ul" bsPrefix=" " className="navbar-nav ml-auto" id="navbar-right">
@@ -101,9 +105,9 @@ const NavRight = () => {
               <div className="pro-head">
                 {/* <img src={avatar1} className="img-radius" alt="User Profile" /> */}
                 <span>{user}</span>
-                <Link to="#" className="dud-logout" title="Logout">
+                <NavLink to={"/signin"} onClick={handleLogout} className="dud-logout" title="Logout">
                   <i className="feather icon-log-out" />
-                </Link>
+                </NavLink>
               </div>
               <ListGroup as="ul" bsPrefix=" " variant="flush" className="pro-body">
                 <ListGroup.Item as="li" bsPrefix=" ">

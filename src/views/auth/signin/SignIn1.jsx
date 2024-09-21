@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card } from 'react-bootstrap';
+import { Button, Card } from 'react-bootstrap';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import TurnstileWidget from '../verification/cloudfare';
 import axios from 'axios';
 import Verify from '../verification/verify';
@@ -10,55 +10,91 @@ const Signin1 = () => {
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
   const [turnstileToken, setTurnstileToken] = useState(null);
-  const [shouldRedirect, setshouldRedirect] = useState(false)
+  const [shouldRedirect, setshouldRedirect] = useState(false);
+  const [employee] = useState(email);
   const navigate = useNavigate()
   const handleSubmit = async (e) => {
     e.preventDefault();
-    //const url = `http://192.168.1.18:8000/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&cf_turnstile_response=${turnstileToken}`
-    const url = `http://192.168.1.18:8000/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&password=${password}`;
+    const url = `http://192.168.1.18:8000/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&cf_turnstile_response=${turnstileToken}`
+    //const url = http://192.168.1.18:8000/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&password=${password};
     //Get the data from backend
-    //if(turnstileToken){
-    try {
-      const result = await axios.get(url);
-      const data = response.data;
-
-      if (data.message && Array.isArray(data.message.Fb) && data.message.Fb.length > 0) {
-        const user = data.message.Fb[0];
-        const authUser = data.message.Auth.user;
-
-        if (user.email_id === email) {
-          if (user.password === password) {
-            if (user.email_id_verified === "1") {
-              if (authUser.email === email) {
-                navigate('/dashboard');
+    if (turnstileToken) {
+      try {
+        const response = await axios.get(url);
+        const message = response.data.message;
+      
+        if (message?.Auth?.user?.name === "Admin" || message?.Auth?.user?.name === "Super Admin") {
+          if (message?.Fb && message?.Auth) {
+            const fbUser = message.Fb;
+            const authUser = message.Auth;
+      
+            if (fbUser.email_id === email) {
+              if (fbUser.pw === password) {
+                if (fbUser.e_vf == 1) {
+                  if (authUser.user.email === email) {
+                    sessionStorage.setItem("company", authUser.user.groups[0].name);
+                    navigate('/dashboard');
+                  } else {
+                    console.log("auth:error: Auth email mismatch");
+                  }
+                } else {
+                  setshouldRedirect(true);  // Handle email verification error
+                }
               } else {
-                console.log("Authentication error: Auth user email doesn't match");
+                window.alert("Incorrect password");
               }
-            } else if (user.email_id_verified === "0") {
-              setshouldRedirect(true); // Redirect for email verification
+            } else {
+              window.alert("No user found");
+              navigate('/signup');
             }
           } else {
-            window.alert("Incorrect password");
+            window.alert("Missing user information");
+            navigate('/signup');
           }
+          console.log("customer")
         } else {
-          window.alert("Email does not match");
+          try {
+            const userResponse = await axios.get(`http://192.168.1.18:8000/api/method/sagasuite.email_acc_api.fetch_value?email_id=${email}&password=${password}&cf_turnstile_response=${turnstileToken}`);
+            const userMessage = userResponse.data.message;
+      
+            if (userMessage?.Fb && userMessage?.Auth) {
+              const fbUser = userMessage.Fb;
+              const authUser = userMessage.Auth;
+      
+              if (fbUser.email_id === email) {
+                if (fbUser.pw === password) {
+                  if (authUser.user.email === email) {
+                    navigate('/user-ui');
+                  } else {
+                    console.log("auth:error: Auth email mismatch");
+                  }
+                } else {
+                  console.log("Invalid password");
+                }
+              } else {
+                console.log("user:error: No matching user found");
+              }
+            } else {
+              window.alert("No user");
+              navigate('/signup')
+            }
+          } catch (userError) {
+            console.log(userError);
+            console.log("Error fetching user information");
+          }
         }
-      } else {
-        window.alert("No user found");
-        navigate('/signup');
-      }
-    } catch (error) {
-      console.error("Error during API call:", error);
+      } catch (error) {
+        console.log(error);
+      }      
     }
-  };
-
-  // const handleVerify = (token) => {
-  //   setTurnstileToken(token)
-  // }
+  }
+  const handleVerify = (token) => {
+    setTurnstileToken(token)
+  }
   if (shouldRedirect) {
     return <Verify />
   }
-  sessionStorage.setItem('email', email)
+  sessionStorage.setItem('email', email);
   return (
     <React.Fragment>
       <div className="auth-wrapper">
@@ -82,9 +118,9 @@ const Signin1 = () => {
                 <div className="input-group mb-4">
                   <input type="password" className="form-control" onChange={(e) => (setpassword(e.target.value))} placeholder="Password" required />
                 </div>
-                {/* <div className="input-group mb-4">
-                <TurnstileWidget siteKey="0x4AAAAAAAjvk8ALU_gVGuSg" onVerify={handleVerify} />
-                </div> */}
+                <div className="input-group mb-4">
+                  <TurnstileWidget siteKey="0x4AAAAAAAjvk8ALU_gVGuSg" onVerify={handleVerify} />
+                </div>
                 <button type='submit' className="btn btn-primary mb-4">login</button>
               </form>
 

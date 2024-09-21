@@ -3,9 +3,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 
 import Loader from './components/Loader/Loader';
 import AdminLayout from './layouts/AdminLayout';
-
+//import AuthGuard from 'route-auth'; // Import the AuthGuard component
 import { BASE_URL } from './config/constant';
-import { path } from 'd3';
 
 export const renderRoutes = (routes = []) => (
   <Suspense fallback={<Loader />}>
@@ -21,7 +20,7 @@ export const renderRoutes = (routes = []) => (
             path={route.path}
             element={
               <Guard>
-                <Layout>{route.routes ? renderRoutes(route.routes) : <Element props={true} />}</Layout>
+                <Layout>{route.routes ? renderRoutes(route.routes) : <Element />}</Layout>
               </Guard>
             }
           />
@@ -39,17 +38,23 @@ const routes = [
   },
   {
     exact: 'true',
+    path: '/signup',
+    element: lazy(() => import('./views/auth/signup/SignUp1'))
+  },
+  {
+    exact: 'true',
     path: '/signin',
     element: lazy(() => import('./views/auth/signin/SignIn1'))
   },
   {
     exact: 'true',
-    path: '/signup',
-    element: lazy(() => import('./views/auth/signup/SignUp1'))
+    path: '/user-ui',
+    element: lazy(() => import('./views/user/index'))
   },
   {
     path: '*',
     layout: AdminLayout,
+    //guard: AuthGuard,  // Protect Admin routes with AuthGuard
     routes: [
       {
         exact: 'true',
@@ -78,7 +83,7 @@ const routes = [
       },
       {
         exact: 'true',
-        path: '/email/viewemail',
+        path: '/email/users',
         element: lazy(() => import('./views/email/viewmail'))
       },
       {
@@ -92,9 +97,14 @@ const routes = [
         element: lazy(() => import('./views/email/addemail'))
       },
       {
-        exact:'true',
+        exact: 'true',
         path: '/plans',
-        element: lazy(()=>import('./views/plans/index'))
+        element: lazy(() => import('./views/plans/index'))
+      },
+      {
+        exact: 'true',
+        path: '/profile',
+        element: lazy(() => import('./views/profile/index'))
       },
       {
         path: '*',

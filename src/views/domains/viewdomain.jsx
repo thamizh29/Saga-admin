@@ -1,15 +1,17 @@
 import React from 'react';
-import { Row, Col, Card, Table, Button, ButtonGroup } from 'react-bootstrap';
+import { Row, Col, Card, Table, Button } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import axios from 'axios';
 export default function ViewDomain() {
     const [data, setdata] = useState([]);
+    const [domain,setdomain] = useState('')
     const email = sessionStorage.getItem('email')
     const handledomain = async (e) => {
         const url = `http://192.168.1.18:8000/api/method/sagasuite.dom_name_api.fetch_value?user_name=${email}`
         try {
             const result = await axios.get(url);
             setdata(result.data.message)
+            setdomain(result.data.message[0].domain_name)
         }
         catch (error) {
             console.log(error)
@@ -33,6 +35,7 @@ export default function ViewDomain() {
             window.alert("server not connected")
         }
     }
+    sessionStorage.setItem('domain',domain)
     return (
         <React.Fragment>
             <Row>
@@ -50,29 +53,25 @@ export default function ViewDomain() {
                                         <th>  </th>
                                     </tr>
                                 </thead>
-                                {/* {
+                                {
                                     data.map((item, index) => {
                                         return (
                                             item.domain_name && (
-                                                <> */}
-                                <tbody>
-                                    <tr>
-                                        <td>domain name</td>
-                                        <td>time and date</td>
-                                        <td onClick={() => handleDelete(item.domain_name)}>
-                                            <ButtonGroup size='sm'>
-                                                <NavLink to={"/domains/editdomain"}>
-                                                <Button className='text-capitalize' variant="primary"><i className='feather icon-edit'></i>Edit</Button>
-                                                </NavLink>
-                                                <Button className='text-capitalize' variant="danger" onClick={handleDelete}><i className='feather icon-trash'></i>Delete</Button>
-                                            </ButtonGroup></td>
-                                    </tr>
-                                </tbody>
-                                {/* </>
+                                                <>
+                                                    <tbody>
+                                                        <tr key={index}>
+                                                            <td>{item.domain_name}</td>
+                                                            <td>{item.creation}</td>
+                                                            <td onClick={() => handleDelete(item.domain_name)}>
+                                                                <Button className='text-capitalize' variant="danger"><i className='feather icon-trash'></i>Delete</Button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </>
                                             )
                                         )
                                     })
-                                } */}
+                                }
                             </Table>
                         </Card.Body>
                     </Card>

@@ -1,7 +1,40 @@
 import React from 'react';
 import { Row, Col, Card, Table, ButtonGroup, Button } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 export default function ViewEmail() {
+    const [data, setdata] = useState([]);
+    const email = sessionStorage.getItem('email')
+    const domain = sessionStorage.getItem('domain')
+    const handleEmail = async (e) => {
+        //const url =`192.168.1.18:8000/api/method/sagasuite.dom_name_api.fetch_value?user_name=${email}`;
+        const url = `http://192.168.1.18:8000/api/method/sagasuite.email_acc_api.fetch_domain?domain_name=${domain}`
+        try {
+            const result = await axios.get(url);
+            setdata(result.data.message)
+        }
+        catch (error) {
+            console.log(error)
+        }
+
+    }
+    useEffect(() => {
+        handleEmail();
+    }, [])
+    const handleDelete = async (click) => {
+
+        const url = `http://192.168.1.18:8000/api/method/sagasuite.email_acc_api.remove_email_acc?email_id=${click}`
+        try {
+            const result = await axios.delete(url);
+            console.log("delete success")
+            handleEmail();
+
+        }
+        catch (error) {
+            console.log(error)
+        }
+    }
     return (
         <React.Fragment>
             <Row>
@@ -19,24 +52,32 @@ export default function ViewEmail() {
                                         <th>options</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>username</td>
-                                        <td>emailid</td>
-                                        <td>
-                                            <ButtonGroup size='sm'>
-                                                <NavLink to={"/email/editemail"}>
-                                                    <Button className='text-capitalize' variant="primary"><i className='feather icon-edit'></i>Edit</Button>
-                                                </NavLink>
-                                                <Button className='text-capitalize' variant="danger"><i className='feather icon-trash'></i>Delete</Button>
-                                                <NavLink to={"/email/dnsrecords"}>
-                                                <Button className='text-capitalize' variant="secondary"><i className='feather icon-settings'></i>DNS</Button>
-                                                </NavLink>
-                                            </ButtonGroup>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </Table>
+                                {
+                                    data.map((item, index) => {
+                                        return (
+                                            item.domain_name && (
+                                                <tbody key={index}>
+                                                    <tr>
+                                                        <td>{item.domain_name}</td>
+                                                        <td>{item.email_id}</td>
+                                                        <td>
+                                                            <ButtonGroup size='sm'>
+                                                                <NavLink to={"/email/editemail"}>
+                                                                    <Button className='text-capitalize' variant="primary"><i className='feather icon-edit'></i>Edit</Button>
+                                                                </NavLink>
+                                                                <Button className='text-capitalize' variant="danger" onClick={() => handleDelete(item.email_id)}><i className='feather icon-trash'></i>Delete</Button>
+                                                                <NavLink to={"/email/dnsrecords"}>
+                                                                    <Button className='text-capitalize' variant="secondary"><i className='feather icon-settings'></i>DNS</Button>
+                                                                </NavLink>
+                                                            </ButtonGroup>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            )
+                                        );
+                                    })
+                                }
+                            </Table >
                         </Card.Body>
                     </Card>
                 </Col>
