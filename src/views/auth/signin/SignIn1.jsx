@@ -86,6 +86,8 @@ const Signin1 = () => {
       } catch (error) {
         console.log(error);
       }      
+    }else{
+      window.alert("verify the cloudfare")
     }
   }
   const handleVerify = (token) => {

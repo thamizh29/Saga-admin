@@ -22,9 +22,9 @@ export default function ViewEmail() {
     useEffect(() => {
         handleEmail();
     }, [])
-    const handleDelete = async (click) => {
+    const handleDelete = async (email_id,domain_name) => {
 
-        const url = `http://192.168.1.18:8000/api/method/sagasuite.email_acc_api.remove_email_acc?email_id=${click}`
+        const url = `http://192.168.1.18:8000/api/method/sagasuite.email_acc_api.remove_email_acc?email_id=${email_id}&domain_name=${domain_name}`
         try {
             const result = await axios.delete(url);
             console.log("delete success")
@@ -65,7 +65,7 @@ export default function ViewEmail() {
                                                                 <NavLink to={"/email/editemail"}>
                                                                     <Button className='text-capitalize' variant="primary"><i className='feather icon-edit'></i>Edit</Button>
                                                                 </NavLink>
-                                                                <Button className='text-capitalize' variant="danger" onClick={() => handleDelete(item.email_id)}><i className='feather icon-trash'></i>Delete</Button>
+                                                                <Button className='text-capitalize' variant="danger" onClick={() => handleDelete(item.email_id,item.domain_name)}><i className='feather icon-trash'></i>Delete</Button>
                                                                 <NavLink to={"/email/dnsrecords"}>
                                                                     <Button className='text-capitalize' variant="secondary"><i className='feather icon-settings'></i>DNS</Button>
                                                                 </NavLink>
