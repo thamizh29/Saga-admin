@@ -11,11 +11,12 @@ const Signin1 = () => {
   const [password, setpassword] = useState("");
   const [turnstileToken, setTurnstileToken] = useState(null);
   const [shouldRedirect, setshouldRedirect] = useState(false);
+  const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
   const [employee] = useState(email);
   const navigate = useNavigate()
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = `http://192.168.1.18:8000/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&cf_turnstile_response=${turnstileToken}`
+    const url = `http://${IP}/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&cf_turnstile_response=${turnstileToken}`
     //const url = http://192.168.1.18:8000/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&password=${password};
     //Get the data from backend
     if (turnstileToken) {
@@ -54,7 +55,7 @@ const Signin1 = () => {
           console.log("customer")
         } else {
           try {
-            const userResponse = await axios.get(`http://192.168.1.18:8000/api/method/sagasuite.email_acc_api.fetch_value?email_id=${email}&password=${password}&cf_turnstile_response=${turnstileToken}`);
+            const userResponse = await axios.get(`http://${IP}/api/method/sagasuite.email_acc_api.fetch_value?email_id=${email}&password=${password}&cf_turnstile_response=${turnstileToken}`);
             const userMessage = userResponse.data.message;
       
             if (userMessage?.Fb && userMessage?.Auth) {

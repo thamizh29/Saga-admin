@@ -6,8 +6,9 @@ export default function ViewDomain() {
     const [data, setdata] = useState([]);
     const [domain,setdomain] = useState('')
     const email = sessionStorage.getItem('email')
+    const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
     const handledomain = async (e) => {
-        const url = `http://192.168.1.18:8000/api/method/sagasuite.dom_name_api.fetch_value?user_name=${email}`
+        const url = `http://${IP}/api/method/sagasuite.dom_name_api.fetch_value?user_name=${email}`
         try {
             const result = await axios.get(url);
             setdata(result.data.message)
@@ -23,7 +24,7 @@ export default function ViewDomain() {
     }, []);
     const handleDelete = async (click) => {
 
-        const url = `http://192.168.1.18:8000/api/method/sagasuite.dom_name_api.remove_domname?user_name=${email}&domain_name=${click}`
+        const url = `http://${IP}/api/method/sagasuite.dom_name_api.remove_domname?user_name=${email}&domain_name=${click}`
         try {
             const result = await axios.delete(url);
             console.log("delete success")

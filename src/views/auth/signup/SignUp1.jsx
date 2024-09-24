@@ -16,9 +16,10 @@ const SignUp1 = () => {
   const [shouldRedirect, setshouldRedirect] = useState(false);
   const [cpassword, setcpassword] = useState('')
   const navigate = useNavigate()
+  const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
   const handleSignup = async (e) => {
     e.preventDefault()
-    const url = `http://192.168.1.18:8000/api/method/sagasuite.customer_api.insert_value?customer_name=${user}&company_name=${company}&customer_type=&email_id=${email}&password=${password}&status=&premium_customer=&phone_number_verified=&email_id_verified=&subscription_plan=&cf_turnstile_response=${turnstileToken}`;
+    const url = `http://${IP}/api/method/sagasuite.customer_api.insert_value?customer_name=${user}&company_name=${company}&customer_type=&email_id=${email}&password=${password}&status=&premium_customer=&phone_number_verified=&email_id_verified=&subscription_plan=&cf_turnstile_response=${turnstileToken}`;
     if (turnstileToken) {
       if (password === cpassword){
         try {
