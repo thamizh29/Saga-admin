@@ -7,10 +7,12 @@ export default function AddEmail() {
   const [domain, setdomain] = useState('')
   const [role,setrole] = useState('')
   const[user,setuser] = useState('');
+  const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
   //const email = sessionStorage.getItem('email')
   const handledomain = async (e) => {
     e.preventDefault();
-      const url = `http://192.168.1.18:8000/api/method/sagasuite.email_acc_api.add_email_accs?domain_name=${domain}&user_name=${user}&role=${role}&company_name=${company}`;
+    
+      const url = `http://${IP}/api/method/sagasuite.email_acc_api.add_email_accs?domain_name=${domain}&user_name=${user}&role=${role}&company_name=${company}`;
       try {
           const result = await axios.post(url);
           if(result.data.message.Message === "This Email already exists in mailcow"){
