@@ -86,7 +86,7 @@ const SignUp1 = () => {
                       <Form.Control type="password" className="form-control" onChange={(e) => (setcpassword(e.target.value))} placeholder="Confirm Password" required />
                     </div>
                     <div className="input-group mb-4">
-                      <TurnstileWidget siteKey="0x4AAAAAAAjvk8ALU_gVGuSg" onVerify={handleVerify} />
+                      <TurnstileWidget siteKey="0x4AAAAAAAi_zSCc2ZfoWGds" onVerify={handleVerify} />
                     </div>
                     <button type='submit' className="btn btn-primary mb-4">Sign up</button>
                   </Form>
