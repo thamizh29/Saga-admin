@@ -1,38 +1,43 @@
-import React from 'react';
-import { Row, Col, Card, Form, Button, InputGroup } from 'react-bootstrap';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { Row, Col, Card, Form, Button, InputGroup, DropdownButton, Dropdown } from 'react-bootstrap';
 import axios from 'axios';
+
 export default function AddEmail() {
   const company = sessionStorage.getItem('company');
-  const [domain, setdomain] = useState('')
-  const [role,setrole] = useState('')
-  const[user,setuser] = useState('');
+  const [domain, setDomain] = useState('');
+  const [role, setRole] = useState('');
+  const [user, setUser] = useState('');
   const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
-  //const email = sessionStorage.getItem('email')
-  const handledomain = async (e) => {
-    e.preventDefault();
-    
-      const url = `http://${IP}/api/method/sagasuite.email_acc_api.add_email_accs?domain_name=${domain}&user_name=${user}&role=${role}&company_name=${company}`;
-      try {
-          const result = await axios.post(url);
-          if(result.data.message.Message === "This Email already exists in mailcow"){
-              window.alert(result.data.message.Message)
-          }
-          else if(result.data.message.Message === "This Domain Name is Not Registered in Domain Name Doctype"){
-              window.alert(result.data.message.Message)
-          }
-          else{
-          console.log(result)
-          console.error()
-          window.alert("Email added succesfully")
-          }
-      }
-      catch (error) {
-          console.log(error)
-          window.alert("server error")
-      }                                                    
+  const data = sessionStorage.getItem('domain');
 
-  }
+  const handleDomain = async (e) => {
+    e.preventDefault();
+
+    const url = `http://${IP}/api/method/sagasuite.email_acc_api.add_email_accs?domain_name=${domain}&user_name=${user}&role=${role}&company_name=${company}`;
+    try {
+      const result = await axios.post(url);
+      if (result.data.message.Message === "This Email already exists in mailcow") {
+        window.alert(result.data.message.Message);
+      } else if (result.data.message.Message === "This Domain Name is Not Registered in Domain Name Doctype") {
+        window.alert(result.data.message.Message);
+      } else {
+        console.log(result);
+        window.alert("Email added successfully");
+      }
+    } catch (error) {
+      console.log(error);
+      window.alert("server error");
+    }
+  };
+
+  const [drop, setDrop] = useState('');
+
+  const handleSelect = (eventKey) => {
+    setDrop(eventKey); // Update the dropdown state
+    setDomain(eventKey); // Update the domain with the selected value
+  };
+
+
   return (
     <React.Fragment>
       <Row>
@@ -43,40 +48,48 @@ export default function AddEmail() {
             </Card.Header>
             <Card.Body>
               <Row>
-                <Form onSubmit={handledomain}>
+                <Form onSubmit={handleDomain}>
                   <Form.Group as={Row} className="mb-3" controlId="formBasicEmail">
                     <Form.Label column sm="2">Username (left part of an email address)</Form.Label>
                     <Col>
                       <InputGroup className="mb-3">
                         <Form.Control
                           aria-label="Recipient's username"
-                          aria-describedby="basic-addon2" onChange={(e)=>setuser(e.target.value)}
+                          aria-describedby="basic-addon2"
+                          onChange={(e) => setUser(e.target.value)}
                         />
-                        <InputGroup.Text id="basic-addon2">@example.com</InputGroup.Text>
+                        <DropdownButton
+                          variant="outline-secondary"
+                          title={drop || 'Select domain'} // Display the selected value in the dropdown title
+                          id="input-group-dropdown-2"
+                          align="end"
+                          onSelect={handleSelect}
+                        >
+                          <Dropdown.Item eventKey={data}>{data}</Dropdown.Item>
+                        </DropdownButton>
                       </InputGroup>
                     </Col>
                   </Form.Group>
-                  <Form.Group as={Row} className="mb-3" controlId="formBasicChecbox">
-                    <Form.Label column sm="2">Domain</Form.Label>
-                    <Col>
-                      {/* <Form.Control as="select" className="mb-3">
-                        <option>Domain</option>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                      </Form.Control> */}
-                       <Form.Control type="text" onChange={(e)=>setdomain(e.target.value)} />
-                    </Col>
-                  </Form.Group>
-                  <Form.Group as={Row} className="mb-3" controlId="formBasicChecbox">
+
+                  <Form.Group as={Row} className="mb-3" controlId="formBasicRole">
                     <Form.Label column sm="2">Role</Form.Label>
                     <Col>
-                      <Form.Control as="select" className="mb-3" onClick={(e)=>setrole(e.target.value)}>
+                      <Form.Control
+                        as="select"
+                        className="mb-3"
+                        onChange={(e) => setRole(e.target.value)}
+                      >
+                        <option value="">Select Role</option>
                         <option>Admin</option>
                         <option>Employee</option>
                       </Form.Control>
+                    </Col>
+                  </Form.Group>
+
+                  <Form.Group as={Row} className="mb-3" >
+                    <Form.Label column sm="2">Templates</Form.Label>
+                    <Col>
+                      <Form.Control type="text" disabled />
                     </Col>
                   </Form.Group>
                   <Form.Group as={Row} className="mb-3" >
@@ -100,64 +113,65 @@ export default function AddEmail() {
                   <Form.Group as={Row} className="mb-3" >
                     <Form.Label column sm="2">Templates</Form.Label>
                     <Col>
-                      <Form.Control type="text" disabled/>
+                      <Form.Control type="text" disabled />
                     </Col>
                   </Form.Group>
                   <Form.Group as={Row} className="mb-3" >
                     <Form.Label column sm="2">Tags</Form.Label>
                     <Col>
-                      <Form.Control type="text" disabled/>
+                      <Form.Control type="text" disabled />
                     </Col>
                   </Form.Group>
                   <Form.Group as={Row} className="mb-3" >
                     <Form.Label column sm="2">Quota</Form.Label>
                     <Col>
-                      <Form.Control type="text" disabled/>
+                      <Form.Control type="text" disabled />
                     </Col>
                   </Form.Group>
                   <Form.Group as={Row} className="mb-3" >
                     <Form.Label column sm="2">Domain quota</Form.Label>
                     <Col>
-                      <Form.Control type="text" disabled/>
+                      <Form.Control type="text" disabled />
                     </Col>
                   </Form.Group>
                   <Form.Group as={Row} className="mb-3" >
                     <Form.Label column sm="2">Domain quota</Form.Label>
                     <Col>
-                      <Form.Control type="text" disabled/>
+                      <Form.Control type="text" disabled />
                     </Col>
                   </Form.Group>
                   <Form.Group as={Row} className="mb-3" >
                     <Form.Label column sm="2">Quarantine notification</Form.Label>
                     <Col>
-                      <Form.Control type="text" disabled/>
+                      <Form.Control type="text" disabled />
                     </Col>
                   </Form.Group>
                   <Form.Group as={Row} className="mb-3" >
                     <Form.Label column sm="2">Domain quota</Form.Label>
                     <Col>
-                      <Form.Control type="text" disabled/>
+                      <Form.Control type="text" disabled />
                     </Col>
                   </Form.Group>
                   <Form.Group as={Row} className="mb-3" >
                     <Form.Label column sm="2">Domain quota</Form.Label>
                     <Col>
-                      <Form.Control type="text" disabled/>
+                      <Form.Control type="text" disabled />
                     </Col>
                   </Form.Group>
                   <Form.Group as={Row} className="mb-3" >
                     <Form.Label column sm="2">Domain quota</Form.Label>
                     <Col>
-                      <Form.Control type="text" disabled/>
+                      <Form.Control type="text" disabled />
                     </Col>
                   </Form.Group>
                   <Form.Group as={Row} className="mb-3" >
                     <Form.Label column sm="2">Domain quota</Form.Label>
                     <Col>
-                      <Form.Control type="text" disabled/>
+                      <Form.Control type="text" disabled />
                     </Col>
                   </Form.Group>
-                  <Button type='submit' variant="primary">Save changes</Button>
+
+                  <Button type="submit" variant="primary">Save changes</Button>
                 </Form>
               </Row>
             </Card.Body>
@@ -166,5 +180,4 @@ export default function AddEmail() {
       </Row>
     </React.Fragment>
   );
-};
-
+}

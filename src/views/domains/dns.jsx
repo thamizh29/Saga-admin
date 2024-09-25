@@ -1,49 +1,66 @@
-import React from 'react';
-import { Row, Col, Card, Table } from 'react-bootstrap';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { Row, Col, Card, Table, Button } from 'react-bootstrap';
+
 
 const DNSRecords = () => {
+  const [data, setData] = useState([]); // Initialize as an empty array
+  const domain = sessionStorage.getItem('domain')
+
+  useEffect(() => {
+    const fetchDomainName = async () => {
+      try {
+        const url = `http://192.168.1.18:8000/api/method/sagasuite.dom_name_api.fetch_dnr?domain_name=${domain}`;
+        const result = await axios.get(url);
+        setData(result.data.message); // Set the data received from the API
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchDomainName();
+  }, []);
+
   return (
     <React.Fragment>
       <Row>
         <Col>
           <Card>
             <Card.Header>
-              <Card.Title as="h5">DNS Records</Card.Title>
+              <Row>
+                <Col>
+                  <Card.Title as="h5">DNS Records</Card.Title>
+                </Col>
+                {/* <Col>
+                  <Button variant="danger">X</Button>
+                </Col> */}
+              </Row>
               <span className="d-block m-t-5">
-                use props <code>striped</code> with <code>Table</code> component
+                Use props <code>striped</code> with <code>Table</code> component
               </span>
             </Card.Header>
             <Card.Body>
-              <Table striped responsive>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Correct Data</th>
-                    <th>Current State</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                    <td>@fat</td>
-                  </tr>
-                  <tr>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                    <td>@fat</td>
-                  </tr>
-                  <tr>
-                    <td>Larry</td>
-                    <td>the Bird</td>
-                    <td>@twitter</td>
-                    <td>@fat</td>
-                  </tr>
-                </tbody>
-              </Table>
+              <div> {/* Added responsive wrapper */}
+                <Table striped responsive>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Correct Data</th>
+                      <th>Current State</th>
+                    </tr>
+                  </thead>
+                  <tbody >
+                    {data.map((item, index) => (
+                      <tr key={index}>
+                        <td>{item.Name}</td>
+                        <td>{item.Type}</td>
+                        <td>{item['Correct Data']}</td>
+                        <td>{item['Current State']}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
             </Card.Body>
           </Card>
         </Col>
@@ -52,4 +69,4 @@ const DNSRecords = () => {
   );
 };
 
-export default  DNSRecords;
+export default DNSRecords;

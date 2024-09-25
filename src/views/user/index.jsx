@@ -5,14 +5,13 @@ import {
   Container,
   Row,
   Col,
-  Form,
-  FormControl,
   CardHeader,
   CardBody,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-const Profile = () => {const handleLogout = () => {
+const Profile = () => {
+  const handleLogout = () => {
     localStorage.clear();
     sessionStorage.clear();
 };

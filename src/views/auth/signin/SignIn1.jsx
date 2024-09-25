@@ -1,10 +1,11 @@
 import React from 'react';
-import { Button, Card } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import TurnstileWidget from '../verification/cloudfare';
 import axios from 'axios';
 import Verify from '../verification/verify';
+import CryptoJS from 'crypto-js';
 
 const Signin1 = () => {
   const [email, setemail] = useState("");
@@ -19,16 +20,16 @@ const Signin1 = () => {
     const url = `http://${IP}/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&cf_turnstile_response=${turnstileToken}`
     //const url = http://192.168.1.18:8000/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&password=${password};
     //Get the data from backend
-    if (turnstileToken) {
+    // if (turnstileToken) {
       try {
         const response = await axios.get(url);
         const message = response.data.message;
-      
+
         if (message?.Auth?.user?.name === "Admin" || message?.Auth?.user?.name === "Super Admin") {
           if (message?.Fb && message?.Auth) {
             const fbUser = message.Fb;
             const authUser = message.Auth;
-      
+
             if (fbUser.email_id === email) {
               if (fbUser.pw === password) {
                 if (fbUser.e_vf == 1) {
@@ -57,11 +58,11 @@ const Signin1 = () => {
           try {
             const userResponse = await axios.get(`http://${IP}/api/method/sagasuite.email_acc_api.fetch_value?email_id=${email}&password=${password}&cf_turnstile_response=${turnstileToken}`);
             const userMessage = userResponse.data.message;
-      
+
             if (userMessage?.Fb && userMessage?.Auth) {
               const fbUser = userMessage.Fb;
               const authUser = userMessage.Auth;
-      
+
               if (fbUser.email_id === email) {
                 if (fbUser.pw === password) {
                   if (authUser.user.email === email) {
@@ -86,10 +87,10 @@ const Signin1 = () => {
         }
       } catch (error) {
         console.log(error);
-      }      
-    }else{
-      window.alert("verify the cloudfare")
-    }
+      }
+    // } else {
+    //   window.alert("verify the cloudfare")
+    // }
   }
   const handleVerify = (token) => {
     setTurnstileToken(token)
@@ -97,7 +98,11 @@ const Signin1 = () => {
   if (shouldRedirect) {
     return <Verify />
   }
-  sessionStorage.setItem('email', email);
+  const SecretKey = import.meta.env.VITE_SECRET_KEY;
+  const Bdata = email;
+  const encrypt = CryptoJS.AES.encrypt(Bdata, SecretKey).toString();
+  sessionStorage.setItem('data', encrypt);
+
   return (
     <React.Fragment>
       <div className="auth-wrapper">
@@ -121,9 +126,9 @@ const Signin1 = () => {
                 <div className="input-group mb-4">
                   <input type="password" className="form-control" onChange={(e) => (setpassword(e.target.value))} placeholder="Password" required />
                 </div>
-                <div className="input-group mb-4">
+                {/* <div className="input-group mb-4">
                   <TurnstileWidget siteKey="0x4AAAAAAAi_zSCc2ZfoWGds" onVerify={handleVerify} />
-                </div>
+                </div> */}
                 <button type='submit' className="btn btn-primary mb-4">login</button>
               </form>
 
