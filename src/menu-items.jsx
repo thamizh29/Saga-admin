@@ -78,11 +78,11 @@ const menuItems = {
           url: '/email/users'
         },
         {
-          id: 'component3',
+          id: 'component4',
           title: 'groups',
           type: 'item',
           icon: 'feather icon-users',
-          url: ''
+          url: '/dashboard'
         }
       ]
     },
@@ -108,7 +108,7 @@ const menuItems = {
       icon: 'icon-group',
       children: [
         {
-          id: 'component3',
+          id: 'component6',
           title: 'Profile',
           type: 'item',
           icon: 'feather icon-user',
@@ -117,17 +117,17 @@ const menuItems = {
       ]
     },
      {
-      id: 'ui-forms3',
+      id: 'ui-forms4',
       title: 'Security',
       type: 'group',
       icon: 'icon-group',
       children: [
         {
-          id: 'component3',
+          id: 'component7',
           title: 'Security',
           type: 'item',
           icon: 'feather icon-shield',
-          url: ''
+          url: '/dashboard'
         }
       ]
     }
