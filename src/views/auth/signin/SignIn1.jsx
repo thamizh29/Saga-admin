@@ -26,7 +26,7 @@ const Signin1 = () => {
         const message = response.data.message;
 
         // if (message?.Auth?.user?.name === "Admin" || message?.Auth?.user?.name === "Super Admin") {
-          if (message?.Fb) {
+          // if (message?.Fb) {  
             const fbUser = message.Fb;
             const authUser = message.Auth;
 
@@ -49,10 +49,10 @@ const Signin1 = () => {
               window.alert("No user found");
               navigate('/signup');
             }
-          } else {
-            window.alert("Missing user information");
-            navigate('/signup');
-          }
+          // } else {
+          //   window.alert("Missing user information");
+          //   navigate('/signup');
+          // }
           console.log("customer")
         // } else {
         //   try {
