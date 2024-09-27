@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 
 import Loader from './components/Loader/Loader';
 import AdminLayout from './layouts/AdminLayout';
+
 import { BASE_URL } from './config/constant';
 
 export const renderRoutes = (routes = []) => (
@@ -19,7 +20,7 @@ export const renderRoutes = (routes = []) => (
             path={route.path}
             element={
               <Guard>
-                <Layout>{route.routes ? renderRoutes(route.routes) : <Element />}</Layout>
+                <Layout>{route.routes ? renderRoutes(route.routes) : <Element props={true} />}</Layout>
               </Guard>
             }
           />
@@ -28,7 +29,6 @@ export const renderRoutes = (routes = []) => (
     </Routes>
   </Suspense>
 );
-
 const routes = [
   {
     exact: 'true',
@@ -53,7 +53,6 @@ const routes = [
   {
     path: '*',
     layout: AdminLayout,
-    //guard: AuthGuard,  // Protect Admin routes with AuthGuard
     routes: [
       {
         exact: 'true',
