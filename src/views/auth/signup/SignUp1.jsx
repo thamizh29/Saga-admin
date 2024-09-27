@@ -26,7 +26,7 @@ const SignUp1 = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    const url = `http://${IP}/api/method/sagasuite.customer_api.insert_value?customer_name=${user}&company_name=${company}&email_id=${email}&password=${password}&cf_turnstile_response=${turnstileToken}&templates=${template}`;
+    const url = `http://${IP}/api/method/sagasuite.customer_api.insert_value?customer_name=${user}&company_name=${company}&email_id=${email}&password=${password}&cf_turnstile_response=${turnstileToken}`;
 
     if (turnstileToken) {
       if (password === cpassword) {
@@ -61,6 +61,7 @@ const SignUp1 = () => {
   const Bdata = email;
   const encrypt = CryptoJS.AES.encrypt(Bdata, SecretKey).toString();
   sessionStorage.setItem('data', encrypt);
+  sessionStorage.setItem('template',template)
 
   const [showModal, setShowModal] = useState(false);
 

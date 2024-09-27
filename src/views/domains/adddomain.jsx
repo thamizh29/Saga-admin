@@ -11,9 +11,10 @@ export default function AddDomain(){
     const decrypt = bytes.toString(CryptoJS.enc.Utf8);
     const email = decrypt;
     const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
+    const template = sessionStorage.getItem('template')
     const handledomain = async (e) => {
       e.preventDefault();
-        const url = `http://${IP}/api/method/sagasuite.dom_name_api.insert_value?domain_name=${data}&user_name=${email}`;
+        const url = `http://${IP}/api/method/sagasuite.dom_name_api.insert_value?domain_name=${data}&user_name=${email}&templates=${template}`;
         try {
             const result = await axios.post(url);
             if (result.data.message.Message === "This domain name was already exists") {
