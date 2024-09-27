@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import TurnstileWidget from '../verification/cloudfare';
 import Verify from '../verification/verify';
-import CryptoJS from 'crypto-js';
+//import CryptoJS from 'crypto-js';
 
 const SignUp1 = () => {
   const [email, setemail] = useState('');
@@ -57,10 +57,10 @@ const SignUp1 = () => {
     return <Verify />
   }
 
-  const SecretKey = import.meta.env.VITE_SECRET_KEY;
-  const Bdata = email;
-  const encrypt = CryptoJS.AES.encrypt(Bdata, SecretKey).toString();
-  sessionStorage.setItem('data', encrypt);
+  // const SecretKey = import.meta.env.VITE_SECRET_KEY;
+  // const Bdata = email;
+  // const encrypt = CryptoJS.AES.encrypt(Bdata, SecretKey).toString();
+  sessionStorage.setItem('data', email);
   sessionStorage.setItem('template',template)
 
   const [showModal, setShowModal] = useState(false);

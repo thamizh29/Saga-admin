@@ -5,7 +5,7 @@ import { useState } from 'react';
 import TurnstileWidget from '../verification/cloudfare';
 import axios from 'axios';
 import Verify from '../verification/verify';
-import CryptoJS from 'crypto-js';
+//import CryptoJS from 'crypto-js';
 
 const Signin1 = () => {
   const [email, setemail] = useState("");
@@ -82,7 +82,7 @@ const Signin1 = () => {
             }
           } catch (userError) {
             console.log(userError);
-            console.log("Error fetching user information");
+            consosessionStoragele.log("Error fetching user information");
           }
         }
       } catch (error) {
@@ -98,10 +98,10 @@ const Signin1 = () => {
   if (shouldRedirect) {
     return <Verify />
   }
-  const SecretKey = import.meta.env.VITE_SECRET_KEY;
-  const Bdata = email;
-  const encrypt = CryptoJS.AES.encrypt(Bdata, SecretKey).toString();
-  sessionStorage.setItem('data', encrypt);
+  // const SecretKey = import.meta.env.VITE_SECRET_KEY;
+  // const Bdata = email;
+  // const encrypt = CryptoJS.AES.encrypt(Bdata, SecretKey).toString();
+  sessionStorage.setItem('data', email);
 
   return (
     <React.Fragment>
