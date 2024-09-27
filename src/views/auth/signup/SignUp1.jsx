@@ -29,7 +29,6 @@ const SignUp1 = () => {
     const url = `https://${IP}/api/method/sagasuite.customer_api.insert_value?customer_name=${user}&company_name=${company}&email_id=${email}&password=${password}&cf_turnstile_response=${turnstileToken}`;
 
     if (turnstileToken) {
-      if (password === cpassword) {
         try {
           const result = await axios.post(url);
           if (result.data.message[0] === "This mail id was already exist please go to login page") {
@@ -38,12 +37,10 @@ const SignUp1 = () => {
           } else {
             setshouldRedirect(true);
           }
+          console.log("enter the try")
         } catch (error) {
           console.log(error);
         }
-      } else {
-        window.alert("Password mismatch");
-      }
     } else {
       window.alert("Please verify the Cloudflare");
     }
@@ -54,6 +51,7 @@ const SignUp1 = () => {
   }
 
   if (shouldRedirect) {
+    console.log("redirect")
     return <Verify />
   }
 

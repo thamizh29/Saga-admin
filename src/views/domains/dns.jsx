@@ -5,12 +5,13 @@ import { Row, Col, Card, Table, Button } from 'react-bootstrap';
 
 const DNSRecords = () => {
   const [data, setData] = useState([]); // Initialize as an empty array
-  const domain = sessionStorage.getItem('domain')
+  const domain = sessionStorage.getItem('domain');
+  const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
 
   useEffect(() => {
     const fetchDomainName = async () => {
       try {
-        const url = `https://192.168.1.18:8000/api/method/sagasuite.dom_name_api.fetch_dnr?domain_name=${domain}`;
+        const url = `https://${IP}/api/method/sagasuite.dom_name_api.fetch_dnr?domain_name=${domain}`;
         const result = await axios.get(url);
         setData(result.data.message); // Set the data received from the API
       } catch (error) {
