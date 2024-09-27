@@ -2,14 +2,13 @@ import React from 'react';
 import { Row, Col, Card, Form, Button, InputGroup, FormControl, DropdownButton, Dropdown } from 'react-bootstrap';
 import { useState } from 'react';
 import axios from 'axios';
-import CryptoJS from 'crypto-js';
+//import CryptoJS from 'crypto-js';
 export default function AddDomain(){
   const [data, setdata] = useState('');
-    const SecretKey = import.meta.env.VITE_SECRET_KEY;
-    const encrypt = sessionStorage.getItem('data')
-    const bytes = CryptoJS.AES.decrypt(encrypt, SecretKey);
-    const decrypt = bytes.toString(CryptoJS.enc.Utf8);
-    const email = decrypt;
+    //const SecretKey = import.meta.env.VITE_SECRET_KEY;
+    // const bytes = CryptoJS.AES.decrypt(encrypt, SecretKey);
+    // const decrypt = bytes.toString(CryptoJS.enc.Utf8);
+    const email =  sessionStorage.getItem('data')
     const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
     const template = sessionStorage.getItem('template')
     const handledomain = async (e) => {
