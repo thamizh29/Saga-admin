@@ -16,14 +16,19 @@ const SignUp1 = () => {
   const [turnstileToken, setTurnstileToken] = useState(null);
   const [shouldRedirect, setshouldRedirect] = useState(false);
   const [cpassword, setcpassword] = useState('')
+  const [template,setTemplate] = useState('select plan')
+  const settemplate = (plan) => {
+    setTemplate(plan);
+    handleModalClose();
+  }
   const navigate = useNavigate()
   const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    const url = `http://${IP}/api/method/sagasuite.customer_api.insert_value?customer_name=${user}&company_name=${company}&email_id=${email}&password=${password}&cf_turnstile_response=${turnstileToken}`;
+    const url = `http://${IP}/api/method/sagasuite.customer_api.insert_value?customer_name=${user}&company_name=${company}&email_id=${email}&password=${password}&cf_turnstile_response=${turnstileToken}&templates=${template}`;
 
-    // if (turnstileToken) {
+    if (turnstileToken) {
       if (password === cpassword) {
         try {
           const result = await axios.post(url);
@@ -39,9 +44,9 @@ const SignUp1 = () => {
       } else {
         window.alert("Password mismatch");
       }
-    // } else {
-    //   window.alert("Please verify the Cloudflare");
-    // }
+    } else {
+      window.alert("Please verify the Cloudflare");
+    }
   }
 
   const handleVerify = (token) => {
@@ -61,7 +66,7 @@ const SignUp1 = () => {
 
   const handleModalOpen = () => setShowModal(true);
   const handleModalClose = () => setShowModal(false);
-
+  console.log(template)
   return (
     <React.Fragment>
       <div className="auth-wrapper">
@@ -103,9 +108,10 @@ const SignUp1 = () => {
                       <InputGroup className="mb-3">
                       
                         <Form.Control
-                          aria-label="Example text with button addon"
+                          aria-label="Selected plan"
                           aria-describedby="basic-addon1"
-                          readOnly defaultValue="Select the plan"
+                          readOnly
+                          Value={template}
                         />
                         <Button variant="primary" onClick={handleModalOpen}>
                         Open Plans
@@ -125,8 +131,9 @@ const SignUp1 = () => {
                                   <Card.Text>
                                     Essential features for personal use.
                                   </Card.Text>
+                                  <h4>10GB </h4>
                                   <h4>$9.99/month</h4>
-                                  <Button variant="primary">Select Plan</Button>
+                                  <Button variant="primary" onClick={()=>settemplate("basic")}>Select Plan</Button>
                                 </Card.Body>
                                 </center>
                               </Card>
@@ -140,8 +147,9 @@ const SignUp1 = () => {
                                   <Card.Text>
                                     More features and flexibility.
                                   </Card.Text>
+                                  <h4>60GB</h4>
                                   <h4>$19.99/month</h4>
-                                  <Button variant="primary">Select Plan</Button>
+                                  <Button variant="primary" onClick={()=>settemplate("standard")}>Select Plan</Button>
                                 </Card.Body>
                                 </center>
                               </Card>
@@ -155,8 +163,9 @@ const SignUp1 = () => {
                                   <Card.Text>
                                     Advanced tools and support for businesses.
                                   </Card.Text>
+                                  <h4>150GB</h4>
                                   <h4>$29.99/month</h4>
-                                  <Button variant="primary">Select Plan</Button>
+                                  <Button variant="primary" onClick={()=>settemplate("premium")}>Select Plan</Button>
                                 </Card.Body>
                                 </center>
                               </Card>
@@ -170,9 +179,9 @@ const SignUp1 = () => {
                         </Modal.Footer>
                       </Modal>
                     </div>
-                    {/* <div className="input-group mb-4">
+                    <div className="input-group mb-4">
                       <TurnstileWidget siteKey="0x4AAAAAAAi_zSCc2ZfoWGds" onVerify={handleVerify} />
-                    </div> */}
+                    </div>
                     <button type="submit" className="btn btn-primary mb-4">Sign up</button>
                   </Form>
                   <p className="mb-2">

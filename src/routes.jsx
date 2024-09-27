@@ -3,7 +3,6 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 
 import Loader from './components/Loader/Loader';
 import AdminLayout from './layouts/AdminLayout';
-import AuthGuard from 'route-auth'; // Import the AuthGuard component
 import { BASE_URL } from './config/constant';
 
 export const renderRoutes = (routes = []) => (
