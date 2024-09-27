@@ -26,7 +26,7 @@ const Signin1 = () => {
         const message = response.data.message;
 
         // if (message?.Auth?.user?.name === "Admin" || message?.Auth?.user?.name === "Super Admin") {
-          if (message?.Fb && message?.Auth) {
+          if (message?.Fb) {
             const fbUser = message.Fb;
             const authUser = message.Auth;
 
