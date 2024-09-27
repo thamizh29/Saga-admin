@@ -25,7 +25,7 @@ const Signin1 = () => {
         const response = await axios.get(url);
         const message = response.data.message;
 
-        if (message?.Auth?.user?.name === "Admin" || message?.Auth?.user?.name === "Super Admin") {
+        // if (message?.Auth?.user?.name === "Admin" || message?.Auth?.user?.name === "Super Admin") {
           if (message?.Fb && message?.Auth) {
             const fbUser = message.Fb;
             const authUser = message.Auth;
@@ -54,37 +54,37 @@ const Signin1 = () => {
             navigate('/signup');
           }
           console.log("customer")
-        } else {
-          try {
-            const userResponse = await axios.get(`https://${IP}/api/method/sagasuite.email_acc_api.fetch_value?email_id=${email}&password=${password}&cf_turnstile_response=${turnstileToken}`);
-            const userMessage = userResponse.data.message;
+        // } else {
+        //   try {
+        //     const userResponse = await axios.get(`https://${IP}/api/method/sagasuite.email_acc_api.fetch_value?email_id=${email}&password=${password}&cf_turnstile_response=${turnstileToken}`);
+        //     const userMessage = userResponse.data.message;
 
-            if (userMessage?.Fb && userMessage?.Auth) {
-              const fbUser = userMessage.Fb;
-              const authUser = userMessage.Auth;
+        //     if (userMessage?.Fb && userMessage?.Auth) {
+        //       const fbUser = userMessage.Fb;
+        //       const authUser = userMessage.Auth;
 
-              if (fbUser.email_id === email) {
-                if (fbUser.pw === password) {
-                  if (authUser.user.email === email) {
-                    navigate('/user-ui');
-                  } else {
-                    console.log("auth:error: Auth email mismatch");
-                  }
-                } else {
-                  console.log("Invalid password");
-                }
-              } else {
-                console.log("user:error: No matching user found");
-              }
-            } else {
-              window.alert("No user");
-              navigate('/signup')
-            }
-          } catch (userError) {
-            console.log(userError);
-            consosessionStoragele.log("Error fetching user information");
-          }
-        }
+        //       if (fbUser.email_id === email) {
+        //         if (fbUser.pw === password) {
+        //           if (authUser.user.email === email) {
+        //             navigate('/user-ui');
+        //           } else {
+        //             console.log("auth:error: Auth email mismatch");
+        //           }
+        //         } else {
+        //           console.log("Invalid password");
+        //         }
+        //       } else {
+        //         console.log("user:error: No matching user found");
+        //       }
+        //     } else {
+        //       window.alert("No user");
+        //       navigate('/signup')
+        //     }
+        //   } catch (userError) {
+        //     console.log(userError);
+        //     consosessionStoragele.log("Error fetching user information");
+        //   }
+        //}
       } catch (error) {
         console.log(error);
       }
