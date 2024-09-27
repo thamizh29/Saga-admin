@@ -20,7 +20,7 @@ const Signin1 = () => {
     const url = `http://${IP}/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&cf_turnstile_response=${turnstileToken}`
     //const url = http://192.168.1.18:8000/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&password=${password};
     //Get the data from backend
-    // if (turnstileToken) {
+    if (turnstileToken) {
       try {
         const response = await axios.get(url);
         const message = response.data.message;
@@ -88,9 +88,9 @@ const Signin1 = () => {
       } catch (error) {
         console.log(error);
       }
-    // } else {
-    //   window.alert("verify the cloudfare")
-    // }
+    } else {
+      window.alert("verify the cloudfare")
+    }
   }
   const handleVerify = (token) => {
     setTurnstileToken(token)
@@ -126,9 +126,9 @@ const Signin1 = () => {
                 <div className="input-group mb-4">
                   <input type="password" className="form-control" onChange={(e) => (setpassword(e.target.value))} placeholder="Password" required />
                 </div>
-                {/* <div className="input-group mb-4">
+                <div className="input-group mb-4">
                   <TurnstileWidget siteKey="0x4AAAAAAAi_zSCc2ZfoWGds" onVerify={handleVerify} />
-                </div> */}
+                </div>
                 <button type='submit' className="btn btn-primary mb-4">login</button>
               </form>
 
