@@ -31,6 +31,7 @@ const SignUp1 = () => {
     if (turnstileToken) {
         try {
           const result = await axios.post(url);
+          console.log("enter")
           if (result.data.message[0] === "This mail id was already exist please go to login page") {
             window.alert(result.data.message[0])
             navigate('/signin')
