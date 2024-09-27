@@ -2,16 +2,11 @@ import React, { useState } from 'react';
 import { Card, ListGroup, Dropdown } from 'react-bootstrap';
 import { Link , NavLink } from 'react-router-dom';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import CryptoJS from 'crypto-js';
 
 import avatar1 from '../../../../assets/images/user/avatar-1.jpg';
 
 const NavRight = () => {
-    const SecretKey = import.meta.env.VITE_SECRET_KEY;
-    const encrypt = sessionStorage.getItem('data')
-    const bytes = CryptoJS.AES.decrypt(encrypt, SecretKey);
-    const decrypt = bytes.toString(CryptoJS.enc.Utf8);
-    const user = decrypt;
+  const user = sessionStorage.getItem('email')
   const handleLogout = () => {
     localStorage.clear();
     sessionStorage.clear();

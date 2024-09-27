@@ -4,29 +4,22 @@ import { Card, Button } from 'react-bootstrap';
 import { useState } from 'react';
 import axios from 'axios';
 import Signin1 from '../signin/SignIn1';
-import CryptoJS from 'crypto-js';
 
 export default function Verify() {
     const [verify, setverify] = useState(1);
+    const email = sessionStorage.getItem('email')
     const [navigate,setnavigate] = useState(false);
-    const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
-    const SecretKey = import.meta.env.VITE_SECRET_KEY;
-    const encrypt = sessionStorage.getItem('data')
-    const bytes = CryptoJS.AES.decrypt(encrypt, SecretKey);
-    const decrypt = bytes.toString(CryptoJS.enc.Utf8);
-    const email = decrypt;
-  
     //const navigate = useNavigate();
 
     const handleForm = async (e) => {
         e.preventDefault();
-        const url = `http://${IP}/api/method/sagasuite.customer_api.fetch_otp?email_id=${email}`
+        const url = `http://192.168.1.18:8000/api/method/sagasuite.customer_api.fetch_otp?email_id=${email}`
         //Api call to get the data from backend
         try {
             const result = await axios.get(url);
             if (Number(result.data.message.OTP) === verify) {
                 //Verify the code 
-                const result = await axios.post(`http://${IP}/api/method/sagasuite.customer_api.update_email_ID?email_id=${email}`)
+                const result = await axios.post(`http://192.168.1.18:8000/api/method/sagasuite.customer_api.update_email_ID?email_id=${email}`)
                 setnavigate(true);
             }
             else {
@@ -39,7 +32,7 @@ export default function Verify() {
         
         //update the value email verification is true
         try {
-            const result = await axios.post(`http://${IP}/api/method/sagasuite.customer_api.update?email_id=${email}`);
+            const result = await axios.post(`http://192.168.1.18:8000/api/method/sagasuite.customer_api.update?email_id=${email}`);
         }
         catch (error) {
             console.log(error)
