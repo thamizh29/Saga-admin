@@ -13,13 +13,13 @@ export default function Verify() {
 
     const handleForm = async (e) => {
         e.preventDefault();
-        const url = `http://192.168.1.18:8000/api/method/sagasuite.customer_api.fetch_otp?email_id=${email}`
+        const url = `https://192.168.1.18:8000/api/method/sagasuite.customer_api.fetch_otp?email_id=${email}`
         //Api call to get the data from backend
         try {
             const result = await axios.get(url);
             if (Number(result.data.message.OTP) === verify) {
                 //Verify the code 
-                const result = await axios.post(`http://192.168.1.18:8000/api/method/sagasuite.customer_api.update_email_ID?email_id=${email}`)
+                const result = await axios.post(`https://192.168.1.18:8000/api/method/sagasuite.customer_api.update_email_ID?email_id=${email}`)
                 setnavigate(true);
             }
             else {
@@ -32,7 +32,7 @@ export default function Verify() {
         
         //update the value email verification is true
         try {
-            const result = await axios.post(`http://192.168.1.18:8000/api/method/sagasuite.customer_api.update?email_id=${email}`);
+            const result = await axios.post(`https://192.168.1.18:8000/api/method/sagasuite.customer_api.update?email_id=${email}`);
         }
         catch (error) {
             console.log(error)

@@ -10,7 +10,7 @@ export default function ViewEmail() {
     const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
     const handleEmail = async (e) => {
         //const url =`192.168.1.18:8000/api/method/sagasuite.dom_name_api.fetch_value?user_name=${email}`;
-        const url = `http://${IP}/api/method/sagasuite.email_acc_api.fetch_domain?domain_name=${domain}`
+        const url = `https://${IP}/api/method/sagasuite.email_acc_api.fetch_domain?domain_name=${domain}`
         try {
             const result = await axios.get(url);
             setdata(result.data.message)
@@ -28,7 +28,7 @@ export default function ViewEmail() {
     }, [])
     const handleDelete = async (email_id,domain_name) => {
 
-        const url = `http://${IP}/api/method/sagasuite.email_acc_api.remove_email_acc?email_id=${email_id}&domain_name=${domain_name}`
+        const url = `https://${IP}/api/method/sagasuite.email_acc_api.remove_email_acc?email_id=${email_id}&domain_name=${domain_name}`
         try {
             const result = await axios.delete(url);
             console.log("delete success")

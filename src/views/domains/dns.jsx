@@ -10,7 +10,7 @@ const DNSRecords = () => {
   useEffect(() => {
     const fetchDomainName = async () => {
       try {
-        const url = `http://192.168.1.18:8000/api/method/sagasuite.dom_name_api.fetch_dnr?domain_name=${domain}`;
+        const url = `https://192.168.1.18:8000/api/method/sagasuite.dom_name_api.fetch_dnr?domain_name=${domain}`;
         const result = await axios.get(url);
         setData(result.data.message); // Set the data received from the API
       } catch (error) {

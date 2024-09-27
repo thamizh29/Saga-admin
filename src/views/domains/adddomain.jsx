@@ -14,7 +14,7 @@ export default function AddDomain(){
     const template = sessionStorage.getItem('template')
     const handledomain = async (e) => {
       e.preventDefault();
-        const url = `http://${IP}/api/method/sagasuite.dom_name_api.insert_value?domain_name=${data}&user_name=${email}&templates=${template}`;
+        const url = `https://${IP}/api/method/sagasuite.dom_name_api.insert_value?domain_name=${data}&user_name=${email}&templates=${template}`;
         try {
             const result = await axios.post(url);
             if (result.data.message.Message === "This domain name was already exists") {

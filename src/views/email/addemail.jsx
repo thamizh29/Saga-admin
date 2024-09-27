@@ -13,7 +13,7 @@ export default function AddEmail() {
   const handleDomain = async (e) => {
     e.preventDefault();
 
-    const url = `http://${IP}/api/method/sagasuite.email_acc_api.add_email_accs?domain_name=${domain}&user_name=${user}&role=${role}&company_name=${company}`;
+    const url = `https://${IP}/api/method/sagasuite.email_acc_api.add_email_accs?domain_name=${domain}&user_name=${user}&role=${role}&company_name=${company}`;
     try {
       const result = await axios.post(url);
       if (result.data.message.Message === "This Email already exists in mailcow") {

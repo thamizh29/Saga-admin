@@ -17,8 +17,8 @@ const Signin1 = () => {
   const navigate = useNavigate()
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = `http://${IP}/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&cf_turnstile_response=${turnstileToken}`
-    //const url = http://192.168.1.18:8000/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&password=${password};
+    const url = `https://${IP}/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&cf_turnstile_response=${turnstileToken}`
+    //const url = https://192.168.1.18:8000/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&password=${password};
     //Get the data from backend
     if (turnstileToken) {
       try {
@@ -56,7 +56,7 @@ const Signin1 = () => {
           console.log("customer")
         } else {
           try {
-            const userResponse = await axios.get(`http://${IP}/api/method/sagasuite.email_acc_api.fetch_value?email_id=${email}&password=${password}&cf_turnstile_response=${turnstileToken}`);
+            const userResponse = await axios.get(`https://${IP}/api/method/sagasuite.email_acc_api.fetch_value?email_id=${email}&password=${password}&cf_turnstile_response=${turnstileToken}`);
             const userMessage = userResponse.data.message;
 
             if (userMessage?.Fb && userMessage?.Auth) {
