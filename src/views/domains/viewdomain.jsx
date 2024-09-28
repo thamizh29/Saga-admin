@@ -19,7 +19,7 @@ export default function ViewDomain() {
 
     // Fetch domain data for user
     const handleDomain = async () => {
-        const url = `http://${IP}/api/method/sagasuite.dom_name_api.fetch_value?user_name=${email}`;
+        const url = `https://${IP}/api/method/sagasuite.dom_name_api.fetch_value?user_name=${email}`;
         try {
             const result = await axios.get(url);
             setData(result.data.message);
@@ -32,7 +32,7 @@ export default function ViewDomain() {
     // Fetch DNS records for selected domain
     const handleFetchDNS = async (domainName) => {
         setIsLoading(true); // Show spinner while fetching
-        const url = `http://${IP}/api/method/sagasuite.dom_name_api.fetch_dnr?domain_name=${domainName}`;
+        const url = `https://${IP}/api/method/sagasuite.dom_name_api.fetch_dnr?domain_name=${domainName}`;
         try {
             const result = await axios.get(url);
             setDnsRecords(result.data.message);
@@ -48,7 +48,7 @@ export default function ViewDomain() {
     }, []);
 
     const handleDelete = async (domainName) => {
-        const url = `http://${IP}/api/method/sagasuite.dom_name_api.remove_domname?user_name=${email}&domain_name=${domainName}`;
+        const url = `https://${IP}/api/method/sagasuite.dom_name_api.remove_domname?user_name=${email}&domain_name=${domainName}`;
         try {
             await axios.delete(url);
             console.log("delete success");
