@@ -28,7 +28,7 @@ const Signin1 = () => {
       const response = await axios.get(url);
       const message = response.data.message;
 
-      if (message?.Fb) {
+      if (message?.Fb && message?.Auth) {
         const fbUser = message.Fb;
         const authUser = message.Auth;
 
@@ -37,7 +37,7 @@ const Signin1 = () => {
             if (fbUser.e_vf === 1) {
               if (authUser.user.email === email) {
                 sessionStorage.setItem("company", authUser.user.groups[0].name);
-                sessionStorage.setItem('email', email);
+                
                 navigate('/dashboard');
               } else {
                 setErrorMessage("Authentication email mismatch.");
@@ -68,7 +68,7 @@ const Signin1 = () => {
   // if (shouldRedirect) {
   //   return <Verify />;
   // }
-
+  sessionStorage.setItem('email', email);
   return (
     <React.Fragment>
       <div className="auth-wrapper">
