@@ -8,7 +8,7 @@ export default function AddDomain(){
     //const SecretKey = import.meta.env.VITE_SECRET_KEY;
     // const bytes = CryptoJS.AES.decrypt(encrypt, SecretKey);
     // const decrypt = bytes.toString(CryptoJS.enc.Utf8);
-    const email =  sessionStorage.getItem('data')
+    const email =  sessionStorage.getItem('email')
     const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
     const template = sessionStorage.getItem('template')
     const handledomain = async (e) => {

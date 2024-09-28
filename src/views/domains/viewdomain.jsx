@@ -1,183 +1,155 @@
-import React, { useState } from 'react';
-import { Row, Col, Card, Form, Button, InputGroup, DropdownButton, Dropdown } from 'react-bootstrap';
+import React from 'react';
+import { Row, Col, Card, Table, Button, Modal, Spinner } from 'react-bootstrap';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
+//import CryptoJS from 'crypto-js';
 
-export default function AddEmail() {
-  const company = sessionStorage.getItem('company');
-  const [domain, setDomain] = useState('');
-  const [role, setRole] = useState('');
-  const [user, setUser] = useState('');
-  const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
-  const data = sessionStorage.getItem('domain');
+export default function ViewDomain() {
+    const [data, setData] = useState([]);
+    const [domain, setDomain] = useState('');
+    const [show, setShow] = useState(false);
+    const [dnsRecords, setDnsRecords] = useState([]);
+    const [isLoading, setIsLoading] = useState(false); // New state for loading spinner
+    //const SecretKey = import.meta.env.VITE_SECRET_KEY;
+    const encrypt = sessionStorage.getItem('email');
+    // const bytes = CryptoJS.AES.decrypt(encrypt, SecretKey);
+    // const decrypt = bytes.toString(CryptoJS.enc.Utf8);
+    // const email = decrypt;
+    const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
 
-  const handleDomain = async (e) => {
-    e.preventDefault();
+    // Fetch domain data for user
+    const handleDomain = async () => {
+        const url = `http://${IP}/api/method/sagasuite.dom_name_api.fetch_value?user_name=${email}`;
+        try {
+            const result = await axios.get(url);
+            setData(result.data.message);
+            setDomain(result.data.message[0]?.domain_name || '');
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
-    const url = `https://${IP}/api/method/sagasuite.email_acc_api.add_email_accs?domain_name=${domain}&user_name=${user}&role=${role}&company_name=${company}`;
-    try {
-      const result = await axios.post(url);
-      if (result.data.message.Message === "This Email already exists in mailcow") {
-        window.alert(result.data.message.Message);
-      } else if (result.data.message.Message === "This Domain Name is Not Registered in Domain Name Doctype") {
-        window.alert(result.data.message.Message);
-      } else {
-        console.log(result);
-        window.alert("Email added successfully");
-      }
-    } catch (error) {
-      console.log(error);
-      window.alert("server error");
-    }
-  };
+    // Fetch DNS records for selected domain
+    const handleFetchDNS = async (domainName) => {
+        setIsLoading(true); // Show spinner while fetching
+        const url = `http://${IP}/api/method/sagasuite.dom_name_api.fetch_dnr?domain_name=${domainName}`;
+        try {
+            const result = await axios.get(url);
+            setDnsRecords(result.data.message);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setIsLoading(false); // Hide spinner after fetching is complete
+        }
+    };
 
-  const [drop, setDrop] = useState('');
+    useEffect(() => {
+        handleDomain();
+    }, []);
 
-  const handleSelect = (eventKey) => {
-    setDrop(eventKey); // Update the dropdown state
-    setDomain(eventKey); // Update the domain with the selected value
-  };
+    const handleDelete = async (domainName) => {
+        const url = `http://${IP}/api/method/sagasuite.dom_name_api.remove_domname?user_name=${email}&domain_name=${domainName}`;
+        try {
+            await axios.delete(url);
+            console.log("delete success");
+            handleDomain();
+        } catch (error) {
+            console.log(error);
+            window.alert("server not connected");
+        }
+    };
 
+    const handleClose = () => setShow(false);
+    const handleShow = (domainName) => {
+        setDomain(domainName);
+        handleFetchDNS(domainName); // Fetch DNS records when modal opens
+        setShow(true);
+    };
 
-  return (
-    <React.Fragment>
-      <Row>
-        <Col sm={12}>
-          <Card>
-            <Card.Header>
-              <Card.Title as="h5">Email</Card.Title>
-            </Card.Header>
-            <Card.Body>
-              <Row>
-                <Form onSubmit={handleDomain}>
-                  <Form.Group as={Row} className="mb-3" controlId="formBasicEmail">
-                    <Form.Label column sm="2">Username (left part of an email address)</Form.Label>
-                    <Col>
-                      <InputGroup className="mb-3">
-                        <Form.Control
-                          aria-label="Recipient's username"
-                          aria-describedby="basic-addon2"
-                          onChange={(e) => setUser(e.target.value)}
-                        />
-                        <DropdownButton
-                          variant="outline-secondary"
-                          title={drop || 'Select domain'} // Display the selected value in the dropdown title
-                          id="input-group-dropdown-2"
-                          align="end"
-                          onSelect={handleSelect}
-                        >
-                          <Dropdown.Item eventKey={data}>{data}</Dropdown.Item>
-                        </DropdownButton>
-                      </InputGroup>
-                    </Col>
-                  </Form.Group>
+    sessionStorage.setItem('domain', domain);
 
-                  <Form.Group as={Row} className="mb-3" controlId="formBasicRole">
-                    <Form.Label column sm="2">Role</Form.Label>
-                    <Col>
-                      <Form.Control
-                        as="select"
-                        className="mb-3"
-                        onChange={(e) => setRole(e.target.value)}
-                      >
-                        <option value="">Select Role</option>
-                        <option>Admin</option>
-                        <option>Employee</option>
-                      </Form.Control>
-                    </Col>
-                  </Form.Group>
+    return (
+        <React.Fragment>
+            <Row>
+                <Col>
+                    <Card>
+                        <Card.Header>
+                            <Card.Title as="h5">Domains</Card.Title>
+                        </Card.Header>
+                        <Card.Body>
+                            <Table responsive hover>
+                                <thead>
+                                    <tr>
+                                        <th>Domain Name</th>
+                                        <th>Date and Time</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {data.map((item, index) => (
+                                        item.domain_name && (
+                                            <tr key={index}>
+                                                <td>{item.domain_name}</td>
+                                                <td>{item.creation}</td>
+                                                <td>
+                                                    <Button className="text-capitalize" variant="danger" onClick={() => handleDelete(item.domain_name)}>
+                                                        <i className="feather icon-trash"></i> Delete
+                                                    </Button>
+                                                    <Button className="text-capitalize" variant="secondary" onClick={() => handleShow(item.domain_name)}>
+                                                        <i className="feather icon-settings"></i> DNS
+                                                    </Button>
+                                                </td>
+                                            </tr>
+                                        )
+                                    ))}
+                                </tbody>
+                            </Table>
+                        </Card.Body>
+                    </Card>
+                </Col>
+            </Row>
 
-                  <Form.Group as={Row} className="mb-3" >
-                    <Form.Label column sm="2">Templates</Form.Label>
-                    <Col>
-                      <Form.Control type="text" disabled />
-                    </Col>
-                  </Form.Group>
-                  <Form.Group as={Row} className="mb-3" >
-                    <Form.Label column sm="2">Full name</Form.Label>
-                    <Col>
-                      <Form.Control type="text" disabled />
-                    </Col>
-                  </Form.Group>
-                  <Form.Group as={Row} className="mb-3" >
-                    <Form.Label column sm="2">password</Form.Label>
-                    <Col>
-                      <Form.Control type="password" disabled />
-                    </Col>
-                  </Form.Group>
-                  <Form.Group as={Row} className="mb-3" >
-                    <Form.Label column sm="2">Confirm password</Form.Label>
-                    <Col>
-                      <Form.Control type="text" disabled />
-                    </Col>
-                  </Form.Group>
-                  <Form.Group as={Row} className="mb-3" >
-                    <Form.Label column sm="2">Templates</Form.Label>
-                    <Col>
-                      <Form.Control type="text" disabled />
-                    </Col>
-                  </Form.Group>
-                  <Form.Group as={Row} className="mb-3" >
-                    <Form.Label column sm="2">Tags</Form.Label>
-                    <Col>
-                      <Form.Control type="text" disabled />
-                    </Col>
-                  </Form.Group>
-                  <Form.Group as={Row} className="mb-3" >
-                    <Form.Label column sm="2">Quota</Form.Label>
-                    <Col>
-                      <Form.Control type="text" disabled />
-                    </Col>
-                  </Form.Group>
-                  <Form.Group as={Row} className="mb-3" >
-                    <Form.Label column sm="2">Domain quota</Form.Label>
-                    <Col>
-                      <Form.Control type="text" disabled />
-                    </Col>
-                  </Form.Group>
-                  <Form.Group as={Row} className="mb-3" >
-                    <Form.Label column sm="2">Domain quota</Form.Label>
-                    <Col>
-                      <Form.Control type="text" disabled />
-                    </Col>
-                  </Form.Group>
-                  <Form.Group as={Row} className="mb-3" >
-                    <Form.Label column sm="2">Quarantine notification</Form.Label>
-                    <Col>
-                      <Form.Control type="text" disabled />
-                    </Col>
-                  </Form.Group>
-                  <Form.Group as={Row} className="mb-3" >
-                    <Form.Label column sm="2">Domain quota</Form.Label>
-                    <Col>
-                      <Form.Control type="text" disabled />
-                    </Col>
-                  </Form.Group>
-                  <Form.Group as={Row} className="mb-3" >
-                    <Form.Label column sm="2">Domain quota</Form.Label>
-                    <Col>
-                      <Form.Control type="text" disabled />
-                    </Col>
-                  </Form.Group>
-                  <Form.Group as={Row} className="mb-3" >
-                    <Form.Label column sm="2">Domain quota</Form.Label>
-                    <Col>
-                      <Form.Control type="text" disabled />
-                    </Col>
-                  </Form.Group>
-                  <Form.Group as={Row} className="mb-3" >
-                    <Form.Label column sm="2">Domain quota</Form.Label>
-                    <Col>
-                      <Form.Control type="text" disabled />
-                    </Col>
-                  </Form.Group>
-
-                  <Button type="submit" variant="primary">Save changes</Button>
-                </Form>
-              </Row>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </React.Fragment>
-  );
+            {/* DNS Records Modal */}
+            <Modal show={show} onHide={handleClose} size="lg">
+                <Modal.Header closeButton>
+                    <Modal.Title>DNS Records for {domain}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {isLoading ? (
+                        <div className="text-center">
+                            <Spinner animation="border" role="status">
+                                <span className="sr-only">Loading...</span>
+                            </Spinner>
+                        </div>
+                    ) : (
+                        <Table striped responsive>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Correct Data</th>
+                                    <th>Current State</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {dnsRecords.map((record, index) => (
+                                    <tr key={index}>
+                                        <td>{record.Name}</td>
+                                        <td>{record.Type}</td>
+                                        <td>{record['Correct Data']}</td>
+                                        <td>{record['Current State']}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </Table>
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </React.Fragment>
+    );
 }
