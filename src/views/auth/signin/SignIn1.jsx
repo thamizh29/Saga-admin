@@ -1,107 +1,73 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card } from 'react-bootstrap';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import TurnstileWidget from '../verification/cloudfare';
 import axios from 'axios';
+import TurnstileWidget from '../verification/cloudfare';
 import Verify from '../verification/verify';
-//import CryptoJS from 'crypto-js';
 
 const Signin1 = () => {
-  const [email, setemail] = useState("");
-  const [password, setpassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [turnstileToken, setTurnstileToken] = useState(null);
-  const [shouldRedirect, setshouldRedirect] = useState(false);
+  const [shouldRedirect, setShouldRedirect] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
-  const [employee] = useState(email);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = `https://${IP}/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&cf_turnstile_response=${turnstileToken}`
-    //const url = https://192.168.1.18:8000/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&password=${password};
-    //Get the data from backend
-    if (turnstileToken) {
-      try {
-        const response = await axios.get(url);
-        const message = response.data.message;
 
-        // if (message?.Auth?.user?.name === "Admin" || message?.Auth?.user?.name === "Super Admin") {
-          // if (message?.Fb) {  
-            const fbUser = message.Fb;
-            const authUser = message.Auth;
+    if (!turnstileToken) {
+      setErrorMessage("Please complete the CAPTCHA verification.");
+      return;
+    }
 
-            if (fbUser.email_id === email) {
-              if (fbUser.pw === password) {
-                if (fbUser.e_vf == 1) {
-                  if (authUser.user.email === email) {
-                    sessionStorage.setItem("company", authUser.user.groups[0].name);
-                    navigate('/dashboard');
-                  } else {
-                    console.log("auth:error: Auth email mismatch");
-                  }
-                } else {
-                  setshouldRedirect(true);  // Handle email verification error
-                }
+    const url = `https://${IP}/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&cf_turnstile_response=${turnstileToken}`;
+
+    try {
+      const response = await axios.get(url);
+      const message = response.data.message;
+
+      if (message?.Fb) {
+        const fbUser = message.Fb;
+        const authUser = message.Auth;
+
+        if (fbUser.email_id === email) {
+          if (fbUser.pw === password) {
+            if (fbUser.e_vf === 1) {
+              if (authUser.user.email === email) {
+                sessionStorage.setItem("company", authUser.user.groups[0].name);
+                sessionStorage.setItem('data', email);
+                navigate('/dashboard');
               } else {
-                window.alert("Incorrect password");
+                setErrorMessage("Authentication email mismatch.");
               }
             } else {
-              window.alert("No user found");
-              navigate('/signup');
+              setShouldRedirect(true); // Redirect to verification
             }
-          // } else {
-          //   window.alert("Missing user information");
-          //   navigate('/signup');
-          // }
-          console.log("customer")
-        // } else {
-        //   try {
-        //     const userResponse = await axios.get(`https://${IP}/api/method/sagasuite.email_acc_api.fetch_value?email_id=${email}&password=${password}&cf_turnstile_response=${turnstileToken}`);
-        //     const userMessage = userResponse.data.message;
-
-        //     if (userMessage?.Fb && userMessage?.Auth) {
-        //       const fbUser = userMessage.Fb;
-        //       const authUser = userMessage.Auth;
-
-        //       if (fbUser.email_id === email) {
-        //         if (fbUser.pw === password) {
-        //           if (authUser.user.email === email) {
-        //             navigate('/user-ui');
-        //           } else {
-        //             console.log("auth:error: Auth email mismatch");
-        //           }
-        //         } else {
-        //           console.log("Invalid password");
-        //         }
-        //       } else {
-        //         console.log("user:error: No matching user found");
-        //       }
-        //     } else {
-        //       window.alert("No user");
-        //       navigate('/signup')
-        //     }
-        //   } catch (userError) {
-        //     console.log(userError);
-        //     consosessionStoragele.log("Error fetching user information");
-        //   }
-        //}
-      } catch (error) {
-        console.log(error);
+          } else {
+            setErrorMessage("Incorrect password.");
+          }
+        } else {
+          setErrorMessage("No user found.");
+        }
+      } else {
+        setErrorMessage("Missing user information.");
+        navigate('/signup');
       }
-    } else {
-      window.alert("verify the cloudfare")
+    } catch (error) {
+      console.log(error);
+      setErrorMessage("An error occurred while fetching data.");
     }
-  }
+  };
+
   const handleVerify = (token) => {
-    setTurnstileToken(token)
-  }
+    setTurnstileToken(token);
+  };
+
   if (shouldRedirect) {
-    return <Verify />
+    return <Verify />;
   }
-  // const SecretKey = import.meta.env.VITE_SECRET_KEY;
-  // const Bdata = email;
-  // const encrypt = CryptoJS.AES.encrypt(Bdata, SecretKey).toString();
-  sessionStorage.setItem('data', email);
 
   return (
     <React.Fragment>
@@ -111,7 +77,7 @@ const Signin1 = () => {
             <span className="r" />
             <span className="r s" />
             <span className="r s" />
-            <span className="r " />
+            <span className="r" />
           </div>
           <Card className="borderless text-center">
             <Card.Body>
@@ -119,19 +85,35 @@ const Signin1 = () => {
                 <i className="feather icon-unlock auth-icon" />
               </div>
               <h3 className="mb-4">Login</h3>
+              {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
               <form onSubmit={handleSubmit}>
                 <div className="input-group mb-4">
-                  <input type="email" className="form-control" onChange={(e) => (setemail(e.target.value))} placeholder="Email address" required />
+                  <input
+                    type="email"
+                    className="form-control"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Email address"
+                    required
+                  />
                 </div>
                 <div className="input-group mb-4">
-                  <input type="password" className="form-control" onChange={(e) => (setpassword(e.target.value))} placeholder="Password" required />
+                  <input
+                    type="password"
+                    className="form-control"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Password"
+                    required
+                  />
                 </div>
                 <div className="input-group mb-4">
                   <TurnstileWidget siteKey="0x4AAAAAAAi_zSCc2ZfoWGds" onVerify={handleVerify} />
                 </div>
-                <button type='submit' className="btn btn-primary mb-4">login</button>
+                <button type="submit" className="btn btn-primary mb-4" disabled={!turnstileToken}>
+                  Login
+                </button>
               </form>
-
               <p className="mb-0 text-muted">
                 Don’t have an account?{' '}
                 <NavLink to="/signup" className="f-w-400">
