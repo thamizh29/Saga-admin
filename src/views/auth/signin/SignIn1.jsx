@@ -43,7 +43,7 @@ const Signin1 = () => {
                 setErrorMessage("Authentication email mismatch.");
               }
             } else {
-              setShouldRedirect(true); // Redirect to verification
+             navigate('/verify')
             }
           } else {
             setErrorMessage("Incorrect password.");

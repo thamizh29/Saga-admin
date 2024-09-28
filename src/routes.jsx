@@ -51,6 +51,11 @@ const routes = [
     element: lazy(() => import('./views/user/index'))
   },
   {
+    exact: 'true',
+    path: '/verify',
+    element: lazy(() => import('./views/auth/verification/verify'))
+  },
+  {
     path: '*',
     layout: AdminLayout,
     routes: [

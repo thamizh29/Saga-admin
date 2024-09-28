@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Button } from 'react-bootstrap';
-//import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
 import Signin1 from '../signin/SignIn1';
@@ -8,9 +8,9 @@ import Signin1 from '../signin/SignIn1';
 export default function Verify() {
     const [verify, setverify] = useState(1);
     const email = sessionStorage.getItem('email')
-    const [navigate,setnavigate] = useState(false);
+    //const [navigate,setnavigate] = useState(false);
     const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
-    //const navigate = useNavigate();
+    const navigate = useNavigate();
 
     const handleForm = async (e) => {
         e.preventDefault();
@@ -21,7 +21,8 @@ export default function Verify() {
             if (Number(result.data.message.OTP) === verify) {
                 //Verify the code 
                 const result = await axios.post(`https://${IP}/api/method/sagasuite.customer_api.update_email_ID?email_id=${email}`)
-                setnavigate(true);
+                // setnavigate(true);
+                navigate('/signin')
             }
             else {
                 window.alert("Invalid code")
@@ -39,9 +40,9 @@ export default function Verify() {
             console.log(error)
         }
     }
-    if(navigate){
-        return <Signin1 />
-    }
+    // if(navigate){
+    //     return <Signin1 />
+    // }
     return (
         <React.Fragment>
             <div className="auth-wrapper">

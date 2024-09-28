@@ -14,7 +14,7 @@ const SignUp1 = () => {
   const [password, setpassword] = useState('');
   const [company, setcompany] = useState('');
   const [turnstileToken, setTurnstileToken] = useState(null);
-  const [shouldRedirect, setshouldRedirect] = useState(false);
+  //const [shouldRedirect, setshouldRedirect] = useState(false);
   const [cpassword, setcpassword] = useState('')
   const [template,setTemplate] = useState('select plan')
   const settemplate = (plan) => {
@@ -36,7 +36,7 @@ const SignUp1 = () => {
             window.alert(result.data.message[0])
             navigate('/signin')
           } else {
-            setshouldRedirect(true);
+            navigate('/verify')
           }
           console.log("enter the try")
         } catch (error) {
@@ -51,10 +51,10 @@ const SignUp1 = () => {
     setTurnstileToken(token);
   }
 
-  if (shouldRedirect) {
-    console.log("redirect")
-    return <Verify />
-  }
+  // if (shouldRedirect) {
+  //   console.log("redirect")
+  //   return <Verify />
+  // }
 
   // const SecretKey = import.meta.env.VITE_SECRET_KEY;
   // const Bdata = email;
