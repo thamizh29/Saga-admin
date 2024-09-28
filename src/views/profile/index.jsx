@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  Button,
   Card,
   Container,
   Row,
@@ -9,68 +8,76 @@ import {
   FormControl,
   CardHeader,
   CardBody,
-  CardImg,
   Image,
-  CardTitle,
   FormLabel,
   FormGroup
 } from "react-bootstrap";
-import ProfileCover from "./header";
 
 const Profile = () => {
+  const user = sessionStorage.getItem('email'); // Retrieving email from sessionStorage
+
   return (
     <React.Fragment>
       <Container>
-        <Card>
-        <CardHeader>
-                <Card.Title>Profile</Card.Title>
-              </CardHeader>
-        <CardBody>
-        <Row>
-          <Col>
-              <Image style={{ height: '200px', width: '200px', borderRadius: '50%', marginLeft: '100px' }} src="src/assets/images/user/img-avatar-2.jpg" />
-            </Col>
-              <Card>
+        <Card className="my-5">
+          <CardHeader>
+            <Card.Title className="text-center">Profile</Card.Title>
+          </CardHeader>
+          <CardBody>
+            <Row className="justify-content-center">
+              {/* User Profile Picture */}
+              <Col xs="auto" className="text-center">
+                <Image
+                  style={{
+                    height: '200px',
+                    width: '200px',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                  }}
+                  src="src/assets/images/user/avatar-1.jpg" // Adjust the path if necessary
+                  alt="User Avatar"
+                />
+              </Col>
+            </Row>
 
-                <CardBody>
-                  <Form>
-                    <FormGroup as={Row} className="mb-3" controlId="formPlaintextEmail">
+            <Row className="mt-4 justify-content-center">
+              <Col xs={12} md={6}>
+                <Card>
+                  <CardBody className="text-center">
+                    <Form>
+                      {/* Email Field */}
+                      <FormGroup as={Row} className="mb-3">
+                        <FormLabel column sm={4}>Email</FormLabel>
+                        <Col sm={8}>
+                          <FormControl
+                            plaintext
+                            readOnly
+                            defaultValue={user || "email@example.com"}
+                          />
+                        </Col>
+                      </FormGroup>
 
-                    <FormLabel column sm={2}>Name</FormLabel>
-                    
-                    <Col sm={2}>
-                    <FormControl plaintext readOnly defaultValue="email@example.com"/>
-                    </Col>
-                    </FormGroup>
-                    <Row>
-                    <Col>
-                    <FormLabel className="mb-4">Name</FormLabel>
-                    </Col>
-                    <Col>
-                    <FormLabel className="mb-4">Name</FormLabel>
-                    </Col>
-                    </Row>
-                    <Row>
-                    <Col>
-                    <FormLabel className="mb-4">Name</FormLabel>
-                    </Col>
-                    <Col>
-                    <FormLabel className="mb-4">Name</FormLabel>
-                    </Col>
-                    </Row>
-                    <Row>
-                    <Col>
-                    <FormLabel className="mb-4">Name</FormLabel>
-                    </Col>
-                    <Col>
-                    <FormLabel className="mb-4">Name</FormLabel>
-                    </Col>
-                    </Row>
-                  </Form>
-                </CardBody>
-              </Card>
-        </Row>
-        </CardBody>
+                      {/* First Name Field */}
+                      <FormGroup as={Row} className="mb-3">
+                        <FormLabel column sm={4}>First Name</FormLabel>
+                        <Col sm={8}>
+                          <FormControl plaintext readOnly defaultValue="John" />
+                        </Col>
+                      </FormGroup>
+
+                      {/* Last Name Field */}
+                      <FormGroup as={Row} className="mb-3">
+                        <FormLabel column sm={4}>Last Name</FormLabel>
+                        <Col sm={8}>
+                          <FormControl plaintext readOnly defaultValue="Doe" />
+                        </Col>
+                      </FormGroup>
+                    </Form>
+                  </CardBody>
+                </Card>
+              </Col>
+            </Row>
+          </CardBody>
         </Card>
       </Container>
     </React.Fragment>
