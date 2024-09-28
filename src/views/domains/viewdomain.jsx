@@ -11,7 +11,7 @@ export default function ViewDomain() {
     const [dnsRecords, setDnsRecords] = useState([]);
     const [isLoading, setIsLoading] = useState(false); // New state for loading spinner
     //const SecretKey = import.meta.env.VITE_SECRET_KEY;
-    const encrypt = sessionStorage.getItem('email');
+    const email = sessionStorage.getItem('email');
     // const bytes = CryptoJS.AES.decrypt(encrypt, SecretKey);
     // const decrypt = bytes.toString(CryptoJS.enc.Utf8);
     // const email = decrypt;
