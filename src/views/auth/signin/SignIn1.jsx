@@ -9,7 +9,6 @@ const Signin1 = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [turnstileToken, setTurnstileToken] = useState(null);
-  //const [shouldRedirect, setShouldRedirect] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
   const navigate = useNavigate();
@@ -32,18 +31,23 @@ const Signin1 = () => {
         const fbUser = message.Fb;
         const authUser = message.Auth;
 
+        // Email check
         if (fbUser.email_id === email) {
+          // Password check (without bcrypt)
           if (fbUser.pw === password) {
-            if (fbUser.e_vf === 1) {
+            // Email verification flag check
+            if (fbUser.e_vf === "1") {
+              // Auth user email check
               if (authUser.user.email === email) {
+                // Save user company and navigate to dashboard
                 sessionStorage.setItem("company", authUser.user.groups[0].name);
-                
+                sessionStorage.setItem("email", email);
                 navigate('/dashboard');
               } else {
                 setErrorMessage("Authentication email mismatch.");
               }
             } else {
-             navigate('/verify')
+              navigate('/verify');
             }
           } else {
             setErrorMessage("Incorrect password.");
@@ -65,10 +69,6 @@ const Signin1 = () => {
     setTurnstileToken(token);
   };
 
-  // if (shouldRedirect) {
-  //   return <Verify />;
-  // }
-  sessionStorage.setItem('email', email);
   return (
     <React.Fragment>
       <div className="auth-wrapper">
