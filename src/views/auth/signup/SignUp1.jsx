@@ -59,7 +59,7 @@ const SignUp1 = () => {
   // const SecretKey = import.meta.env.VITE_SECRET_KEY;
   // const Bdata = email;
   // const encrypt = CryptoJS.AES.encrypt(Bdata, SecretKey).toString();
-  sessionStorage.setItem('data', email);
+  sessionStorage.setItem('email', email);
   sessionStorage.setItem('template',template)
 
   const [showModal, setShowModal] = useState(false);

@@ -9,7 +9,7 @@ const Signin1 = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [turnstileToken, setTurnstileToken] = useState(null);
-  const [shouldRedirect, setShouldRedirect] = useState(false);
+  //const [shouldRedirect, setShouldRedirect] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ const Signin1 = () => {
             if (fbUser.e_vf === 1) {
               if (authUser.user.email === email) {
                 sessionStorage.setItem("company", authUser.user.groups[0].name);
-                sessionStorage.setItem('data', email);
+                sessionStorage.setItem('email', email);
                 navigate('/dashboard');
               } else {
                 setErrorMessage("Authentication email mismatch.");
@@ -65,9 +65,9 @@ const Signin1 = () => {
     setTurnstileToken(token);
   };
 
-  if (shouldRedirect) {
-    return <Verify />;
-  }
+  // if (shouldRedirect) {
+  //   return <Verify />;
+  // }
 
   return (
     <React.Fragment>
