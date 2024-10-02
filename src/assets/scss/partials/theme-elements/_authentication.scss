@@ -41,13 +41,31 @@
 
   .auth-content {
     position: relative;
-    width: 390px;
+    width: 700px;
     padding: 15px;
     z-index: 5;
     &.multyform,
     &.subscribe {
       width: 750px;
     }
+  }
+  .custom-form-top {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    
+  }
+  .custom-form{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    
+  }
+  .custom-form-2 {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-left: 10px;
   }
   @media only screen and (max-width: 768px) {
     max-width: 360px;
@@ -57,6 +75,17 @@
       .card-body {
         padding: 30px 15px;
       }
+    }
+    .custom-form-top {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+    .custom-form,
+    .custom-form-2 {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
     }
   }
 

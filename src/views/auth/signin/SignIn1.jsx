@@ -11,15 +11,16 @@ const Signin1 = () => {
   const [turnstileToken, setTurnstileToken] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
+  const Key = import.meta.env.VITE_SITE_KEY;
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!turnstileToken) {
-      setErrorMessage("Please complete the CAPTCHA verification.");
-      return;
-    }
+    // if (!turnstileToken) {
+    //   setErrorMessage("Please complete the CAPTCHA verification.");
+    //   return;
+    // }
 
     const url = `https://${IP}/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&cf_turnstile_response=${turnstileToken}`;
 
@@ -27,47 +28,67 @@ const Signin1 = () => {
       const response = await axios.get(url);
       const message = response.data.message;
 
-      if (message?.Fb && message?.Auth) {
+      if (message?.Fb) {
         const fbUser = message.Fb;
-        const authUser = message.Auth;
-
+    
         // Email check
         if (fbUser.email_id === email) {
+          
           // Password check (without bcrypt)
           if (fbUser.pw === password) {
+            
             // Email verification flag check
             if (fbUser.e_vf === "1") {
+              
               // Auth user email check
-              if (authUser.user.email === email) {
-                // Save user company and navigate to dashboard
-                sessionStorage.setItem("company", authUser.user.groups[0].name);
-                sessionStorage.setItem("email", email);
-                navigate('/dashboard');
+              if (message?.Auth) {
+                const authUser = message.Auth;
+                
+                if (authUser.user.email === email) {
+                  // Save user company and navigate to dashboard
+                  sessionStorage.setItem("company", authUser.user.groups[0].name);
+                  navigate('/dashboard');
+                } else {
+                  window.alert("Authentication email mismatch.");
+                }
               } else {
-                setErrorMessage("Authentication email mismatch.");
+                window.alert("Authentication data not found.");
+                console.log("No auth object in message.");
               }
+    
             } else {
+              // Email not verified, navigate to verification page
               navigate('/verify');
             }
+            
           } else {
-            setErrorMessage("Incorrect password.");
+            // Incorrect password
+            window.alert("Incorrect password.");
           }
+    
         } else {
-          setErrorMessage("No user found.");
+          // No user with that email
+          window.alert("No user found with that email.");
         }
-      } else {
-        setErrorMessage("Missing user information.");
-        navigate('/signup');
+    
+      } else if(message.Status === "Succes"){
+          navigate('/dashboard')
+      }
+      
+      else {
+        // No Fb object, navigate to verification
+        window.alert("User does not verify.");
+        navigate('/verify');
       }
     } catch (error) {
       console.log(error);
-      setErrorMessage("An error occurred while fetching data.");
+      setErrorMessage("An error occurred while processing the request.");
     }
   };
-
-  const handleVerify = (token) => {
-    setTurnstileToken(token);
-  };
+  sessionStorage.setItem("email", email);
+  // const handleVerify = (token) => {
+  //   setTurnstileToken(token);
+  // };
 
   return (
     <React.Fragment>
@@ -107,10 +128,10 @@ const Signin1 = () => {
                     required
                   />
                 </div>
-                <div className="input-group mb-4">
-                  <TurnstileWidget siteKey="0x4AAAAAAAi_zSCc2ZfoWGds" onVerify={handleVerify} />
-                </div>
-                <button type="submit" className="btn btn-primary mb-4" disabled={!turnstileToken}>
+                {/* <div className="input-group mb-4">
+                  <TurnstileWidget siteKey={Key} onVerify={handleVerify} />
+                </div> */}
+                <button type="submit" className="btn btn-primary mb-4" >
                   Login
                 </button>
               </form>
