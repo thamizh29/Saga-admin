@@ -18,10 +18,10 @@ const Signin1 = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true)
-    // if (!turnstileToken) {
-    //   setErrorMessage("Please complete the CAPTCHA verification.");
-    //   return;
-    // }
+    if (!turnstileToken) {
+      setErrorMessage("Please complete the CAPTCHA verification.");
+      return;
+    }
 
     const url = `https://${IP}/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&cf_turnstile_response=${turnstileToken}`;
 
@@ -93,9 +93,9 @@ const Signin1 = () => {
     }
   };
   sessionStorage.setItem("email", email);
-  // const handleVerify = (token) => {
-  //   setTurnstileToken(token);
-  // };
+  const handleVerify = (token) => {
+    setTurnstileToken(token);
+  };
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -147,9 +147,9 @@ const Signin1 = () => {
                 </Button>
                 </InputGroup>
                 </div>
-                {/* <div className="input-group mb-4">
+                <div className="input-group mb-4">
                   <TurnstileWidget siteKey={Key} onVerify={handleVerify} />
-                </div> */}
+                </div>
                 {isLoading ? (<div className="text-center">
                       <Spinner animation="border" role="status" aria-label="Loading..." />
                     </div>
