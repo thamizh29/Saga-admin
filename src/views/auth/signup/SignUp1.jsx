@@ -1,8 +1,9 @@
 import React from 'react';
-import { Card, Row, Col, Form, Button, Modal, InputGroup, DropdownButton, Dropdown } from 'react-bootstrap';
+import { Card, Row, Col, Form, Button, Modal, InputGroup, DropdownButton, Dropdown, Spinner, Image } from 'react-bootstrap';
 import { NavLink, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useState } from 'react';
+import Cookies from 'js-cookie';
 
 import TurnstileWidget from '../verification/cloudfare';
 import Verify from '../verification/verify';
@@ -18,7 +19,8 @@ const SignUp1 = () => {
   //const [shouldRedirect, setshouldRedirect] = useState(false);
   const [cpassword, setcpassword] = useState('')
   const [template, setTemplate] = useState('')
-  const [selectedCountry, setSelectedCountry] = useState('Ph')
+  const [selectedCountry, setSelectedCountry] = useState('')
+  const [isLoading, setIsLoading] = useState(false);
   const settemplate = (plan) => {
     setTemplate(plan);
     handleModalClose();
@@ -29,6 +31,7 @@ const SignUp1 = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    setIsLoading(true)
     const url = `https://${IP}/api/method/sagasuite.customer_api.insert_value?customer_name=${user}&company_name=${company}&email_id=${email}&password=${password}&country_code=${selectedCountry}&phone_number=${mobile}&cf_turnstile_response=${turnstileToken}&subscription_plan=${template}`;
 
     // if (turnstileToken) {
@@ -43,6 +46,8 @@ const SignUp1 = () => {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
     // } else {
     //   window.alert("Please verify the Cloudflare");
@@ -62,6 +67,7 @@ const SignUp1 = () => {
   // const Bdata = email;
   // const encrypt = CryptoJS.AES.encrypt(Bdata, SecretKey).toString();
   sessionStorage.setItem('email', email);
+  Cookies.set('user', user, { expires: 0.00139 })
   //sessionStorage.setItem('template',template)
 
   const [showModal, setShowModal] = useState(false);
@@ -169,7 +175,7 @@ const SignUp1 = () => {
   const filteredCountries = countries.filter(country =>
     country.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
- console.log(selectedCountry)
+  //console.log(selectedCountry)
   return (
     <React.Fragment>
       <div className="auth-wrapper">
@@ -184,13 +190,14 @@ const SignUp1 = () => {
             <Row className="align-items-center">
               <Col>
                 <Card.Body className="text-center">
-                  <div className="mb-4">
-                    <i className="feather icon-user-plus auth-icon" />
+                    <div className="mb-4">
+                      <i className="feather icon-user-plus auth-icon" />
+                    </div>
+                  <h3 className="mb-2">Create with</h3>
+                  <div className="mb-4 align-items-center">
+                  <Image className="align-items-center" src="src/assets/images/auth-logo.svg" rounded /> 
                   </div>
-                  <h3 className="mb-4">Create Saga account</h3>
-                  <Form onSubmit={handleSignup}>
-                    <div className='custom-form-top'>
-                    <div className='custom-form '>
+                  <Form className='auth-form' onSubmit={handleSignup}>
                     <div className="input-group mb-4">
                       <Form.Control type="name" className="form-control" onChange={(e) => setuser(e.target.value)} placeholder="User name" required />
                     </div>
@@ -199,16 +206,20 @@ const SignUp1 = () => {
                     </div>
                     <div className="input-group mb-4">
                       <Form.Control type="email" className="form-control" onChange={(e) => setemail(e.target.value)} placeholder="Email address" required />
-                    </div> 
-                   
                     </div>
-                    <div className='custom-form-2'>
-              
+                    <div className="input-group mb-4">
+                      <InputGroup>
+                        <Form.Control type={showPassword ? "text" : "password"} className="form-control" onChange={(e) => setpassword(e.target.value)} placeholder="Password" required />
+                        <Button variant="outline-secondary" onClick={togglePasswordVisibility}>
+                          <i className={showPassword ? 'feather icon-eye-off' : 'feather icon-eye'} />
+                        </Button>
+                      </InputGroup>
+                    </div>
                     <div className="input-group mb-4">
                       <InputGroup>
                         <DropdownButton
                           variant="outline-secondary"
-                          title={`${selectedCountry}`}
+                          title={`${selectedCountry}` || 'Ph'}
                           id="input-group-dropdown-2"
                           align="end"
 
@@ -229,42 +240,35 @@ const SignUp1 = () => {
                             }
                           </div>
                         </DropdownButton>
-                        <Form.Control type="phonenumber" className="form-control" onChange={(e) => setmobile(e.target.value)} placeholder="Mobile number" required />
+                        <Form.Control type="phonenumber" disabled={!selectedCountry} className="form-control" onChange={(e) => setmobile(e.target.value)} placeholder="Mobile number" required />
                       </InputGroup>
                     </div>
-                    <div className="input-group mb-4">
-                      <InputGroup>
-                        <Form.Control type={showPassword ? "text" : "password"} className="form-control" onChange={(e) => setpassword(e.target.value)} placeholder="Password" required />
-                        <Button variant="outline-secondary" onClick={togglePasswordVisibility}>
-                          <i className={showPassword ? 'feather icon-eye-off' : 'feather icon-eye'} />
-                        </Button>
-                      </InputGroup>
-                    </div>
-                    <div className="input-group mb-4">
+
+                    {/* <div className="input-group mb-4">
                       <InputGroup>
                         <Form.Control type={showPassword ? "text" : "password"} className="form-control" onChange={(e) => setcpassword(e.target.value)} placeholder="Confirm Password" required />
                         <Button variant="outline-secondary" onClick={togglePasswordVisibility}>
                           <i className={showPassword ? 'feather icon-eye-off' : 'feather icon-eye'} />
                         </Button>
                       </InputGroup>
-                    </div>
-                  </div>
-                  </div>
-{/*                  
+                    </div> */}
+
+
+                    {/*                  
                     <div className="input-group mb-4">
                       <TurnstileWidget siteKey={Key} onVerify={handleVerify} />
                     </div> */}
-                     <div style={{width:'310px'}} className="mb-4 ">
+                    <div className="mb-4 ">
                       <InputGroup className="mb-3">
 
                         <Form.Control
                           aria-label="Selected plan"
                           aria-describedby="basic-addon1"
                           readOnly
-                          Value={template || "select plan"}
+                          value={template || "select plan"}
                         />
-                        <Button variant="primary" onClick={handleModalOpen}>
-                          Open Plans
+                        <Button variant="outline-secondary" onClick={handleModalOpen}>
+                          Plans
                         </Button>
                       </InputGroup>
                       <Modal size='xl' show={showModal} onHide={handleModalClose}>
@@ -352,8 +356,14 @@ const SignUp1 = () => {
                           </Button>
                         </Modal.Footer>
                       </Modal>
-                    </div> 
-                    <button type="submit" className="btn btn-primary mb-4" disabled={!template}>Sign up</button>
+                    </div>
+                    {isLoading ? (
+                    <div className="text-center">
+                      <Spinner animation="border" role="status" aria-label="Loading..." />
+                    </div>
+                  ) : (
+                    <button type="submit" className="btn btn-primary mb-4" disabled={!(template && mobile)}>Sign up</button>
+                  )}
                   </Form>
                   <p className="mb-2">
                     Already have an account?{' '}
