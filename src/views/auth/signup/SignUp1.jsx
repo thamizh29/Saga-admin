@@ -34,7 +34,7 @@ const SignUp1 = () => {
     setIsLoading(true)
     const url = `https://${IP}/api/method/sagasuite.customer_api.insert_value?customer_name=${user}&company_name=${company}&email_id=${email}&password=${password}&country_code=${selectedCountry}&phone_number=${mobile}&cf_turnstile_response=${turnstileToken}&subscription_plan=${template}`;
 
-    // if (turnstileToken) {
+    if (turnstileToken) {
     try {
       const result = await axios.post(url);
       const data = result.data.message[0];
@@ -49,19 +49,15 @@ const SignUp1 = () => {
     } finally {
       setIsLoading(false);
     }
-    // } else {
-    //   window.alert("Please verify the Cloudflare");
-    // }
+    } else {
+      window.alert("Please verify the Cloudflare");
+    }
   }
 
-  // const handleVerify = (token) => {
-  //   setTurnstileToken(token);
-  // }
+  const handleVerify = (token) => {
+    setTurnstileToken(token);
+  }
 
-  // if (shouldRedirect) {
-  //   console.log("redirect")
-  //   return <Verify />
-  // }
 
   // const SecretKey = import.meta.env.VITE_SECRET_KEY;
   // const Bdata = email;
@@ -252,12 +248,6 @@ const SignUp1 = () => {
                         </Button>
                       </InputGroup>
                     </div> */}
-
-
-                    {/*                  
-                    <div className="input-group mb-4">
-                      <TurnstileWidget siteKey={Key} onVerify={handleVerify} />
-                    </div> */}
                     <div className="mb-4 ">
                       <InputGroup className="mb-3">
 
@@ -356,6 +346,9 @@ const SignUp1 = () => {
                           </Button>
                         </Modal.Footer>
                       </Modal>
+                    </div>                
+                    <div className="input-group mb-4">
+                      <TurnstileWidget siteKey={Key} onVerify={handleVerify} />
                     </div>
                     {isLoading ? (
                     <div className="text-center">
