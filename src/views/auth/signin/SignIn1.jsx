@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card } from 'react-bootstrap';
+import { Card , Spinner,Form, InputGroup, Button, Image } from 'react-bootstrap';
 import { NavLink, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import TurnstileWidget from '../verification/cloudfare';
@@ -12,11 +12,12 @@ const Signin1 = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
   const Key = import.meta.env.VITE_SITE_KEY;
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setIsLoading(true)
     // if (!turnstileToken) {
     //   setErrorMessage("Please complete the CAPTCHA verification.");
     //   return;
@@ -74,21 +75,32 @@ const Signin1 = () => {
       } else if(message.Status === "Succes"){
           navigate('/dashboard')
       }
+      else if(message.Message === "User not found"){
+        window.alert("You don't have any account please signup")
+        navigate('/signup')
+       }
       
       else {
         // No Fb object, navigate to verification
-        window.alert("User does not verify.");
+        window.alert("Email verification not done yet");
         navigate('/verify');
       }
     } catch (error) {
       console.log(error);
       setErrorMessage("An error occurred while processing the request.");
+    }finally{
+      setIsLoading(false)
     }
   };
   sessionStorage.setItem("email", email);
   // const handleVerify = (token) => {
   //   setTurnstileToken(token);
   // };
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   return (
     <React.Fragment>
@@ -105,11 +117,14 @@ const Signin1 = () => {
               <div className="mb-4">
                 <i className="feather icon-unlock auth-icon" />
               </div>
-              <h3 className="mb-4">Login</h3>
+              <h3 className="mb-2">Login with</h3>
+              <div className="mb-4 align-items-center">
+                  <Image className="align-items-center" src="src/assets/images/auth-logo.svg" rounded /> 
+              </div>
               {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
-              <form onSubmit={handleSubmit}>
+              <Form className='auth-form' onSubmit={handleSubmit}>
                 <div className="input-group mb-4">
-                  <input
+                  <Form.Control
                     type="email"
                     className="form-control"
                     value={email}
@@ -119,22 +134,31 @@ const Signin1 = () => {
                   />
                 </div>
                 <div className="input-group mb-4">
-                  <input
-                    type="password"
+                  <InputGroup>
+                  <Form.Control
+                    type={showPassword ? "text" : "password"} 
                     className="form-control"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
                     required
-                  />
+                  /> <Button variant="outline-secondary" onClick={togglePasswordVisibility}>
+                  <i className={showPassword ? 'feather icon-eye-off' : 'feather icon-eye'} />
+                </Button>
+                </InputGroup>
                 </div>
                 {/* <div className="input-group mb-4">
                   <TurnstileWidget siteKey={Key} onVerify={handleVerify} />
                 </div> */}
+                {isLoading ? (<div className="text-center">
+                      <Spinner animation="border" role="status" aria-label="Loading..." />
+                    </div>
+                  ) : (
                 <button type="submit" className="btn btn-primary mb-4" >
                   Login
                 </button>
-              </form>
+                )}
+              </Form>
               <p className="mb-0 text-muted">
                 Don’t have an account?{' '}
                 <NavLink to="/signup" className="f-w-400">

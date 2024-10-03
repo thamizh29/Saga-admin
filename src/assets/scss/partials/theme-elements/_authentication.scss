@@ -41,7 +41,7 @@
 
   .auth-content {
     position: relative;
-    width: 700px;
+    width: 430px;
     padding: 15px;
     z-index: 5;
     &.multyform,
@@ -49,23 +49,9 @@
       width: 750px;
     }
   }
-  .custom-form-top {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    
-  }
-  .custom-form{
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    
-  }
-  .custom-form-2 {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    padding-left: 10px;
+  .auth-form{
+    padding-left: 10px; 
+    padding-right: 10px;
   }
   @media only screen and (max-width: 768px) {
     max-width: 360px;
@@ -76,17 +62,7 @@
         padding: 30px 15px;
       }
     }
-    .custom-form-top {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-    }
-    .custom-form,
-    .custom-form-2 {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-    }
+    
   }
 
   .auth-icon {

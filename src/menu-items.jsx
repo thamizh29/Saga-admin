@@ -51,24 +51,17 @@ const menuItems = {
     },
     {
       id: 'ui-forms1',
-      title: 'Email',
+      title: 'Users',
       type: 'group',
       icon: 'icon-group',
       children: [
+        
         {
-          id: 'component2',
-          title: 'Email',
-          type: 'collapse',
-          icon: 'feather icon-mail',
-          children: [
-            {
-              id: 'forms',
-              title: 'Add Email',
-              type: 'item',
-              icon: 'feather icon-plus-circle',
-              url: '/email/addemail'
-            }
-          ]
+           id: 'forms',
+           title: 'Add User',
+           type: 'item',
+           icon: 'feather icon-plus-circle',
+           url: '/email/addemail'
         },
         {
           id: 'component3',
@@ -101,36 +94,6 @@ const menuItems = {
         }
       ]
     },
-    {
-      id: 'ui-forms3',
-      title: 'User',
-      type: 'group',
-      icon: 'icon-group',
-      children: [
-        {
-          id: 'component6',
-          title: 'Profile',
-          type: 'item',
-          icon: 'feather icon-user',
-          url: '/profile'
-        }
-      ]
-    },
-     {
-      id: 'ui-forms4',
-      title: 'Security',
-      type: 'group',
-      icon: 'icon-group',
-      children: [
-        {
-          id: 'component7',
-          title: 'Security',
-          type: 'item',
-          icon: 'feather icon-shield',
-          url: '/dashboard'
-        }
-      ]
-    }
   ]
 }
 

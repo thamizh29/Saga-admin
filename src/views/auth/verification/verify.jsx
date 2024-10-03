@@ -1,19 +1,23 @@
 import React from 'react';
-import { Card, Button } from 'react-bootstrap';
+import { Card, Button, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
-import Signin1 from '../signin/SignIn1';
+import Cookies from 'js-cookie';
 
 export default function Verify() {
     const [verify, setverify] = useState(1);
     const email = sessionStorage.getItem('email')
+    const user = Cookies.get('user');
     //const [navigate,setnavigate] = useState(false);
     const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
     const navigate = useNavigate();
+    const [isSendLoading, setIsSendLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleForm = async (e) => {
         e.preventDefault();
+        setIsSendLoading(true)
         const url = `https://${IP}/api/method/sagasuite.customer_api.fetch_otp?email_id=${email}`
         //Api call to get the data from backend
         try {
@@ -22,6 +26,7 @@ export default function Verify() {
                 //Verify the code 
                 const result = await axios.post(`https://${IP}/api/method/sagasuite.customer_api.update_email_ID?email_id=${email}`)
                 // setnavigate(true);
+                window.alert("Email verify successfully")
                 navigate('/signin')
             }
             else {
@@ -29,15 +34,20 @@ export default function Verify() {
             }
         }
         catch (error) { console.log(error) }
+        finally {
+            setIsSendLoading(false)
+        }
     }
     const Resend = async (e) => {
-        
+        setIsLoading(true)
         //update the value email verification is true
         try {
-            const result = await axios.post(`https://${IP}:8000/api/method/sagasuite.customer_api.update?email_id=${email}`);
+            const result = await axios.post(`https://${IP}/api/method/sagasuite.customer_api.update?email_id=${email}&customer_name=${user}`);
         }
         catch (error) {
             console.log(error)
+        }finally{
+            setIsLoading(false)
         }
     }
     // if(navigate){
@@ -61,14 +71,26 @@ export default function Verify() {
                             <div className="mb-4">
                                 <i className="feather icon-user-check auth-icon" />
                             </div>
-                            <h3 className="mb-4">Verification</h3>
+                            <h3 className="mb-4">Email Verification</h3>
                             <form onSubmit={handleForm}>
                                 <div className="input-group mb-3">
                                     <input type="number" className="form-control" onChange={(e) => (setverify(Number(e.target.value)))} placeholder="Verification code" required />
                                 </div>
                                 <div className='d-grid'>
+                                {isLoading ? (
+                                        <div className="text-center">
+                                        <Spinner animation="border" role="status" aria-label="Loading..." />
+                                    </div>
+                                    ) : (
                                     <Button style={{ width: '21rem' }} onClick={Resend} className="btn btn-primary mb-3">Resend</Button>
-                                    <Button type='submit' className="btn btn-success mb-3">Submit</Button>
+                                    )}
+                                    {isSendLoading ? (
+                                        <div className="text-center">
+                                        <Spinner animation="border" role="status" aria-label="Loading..." />
+                                    </div>
+                                    ) : (
+                                        <Button type='submit' className="btn btn-success mb-3">Submit</Button>
+                                    )}
                                 </div>
                             </form>
                         </Card.Body>
