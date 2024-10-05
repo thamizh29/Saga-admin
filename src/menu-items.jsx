@@ -75,7 +75,7 @@ const menuItems = {
           title: 'groups',
           type: 'item',
           icon: 'feather icon-users',
-          url: '/dashboard'
+          url: '/groups'
         }
       ]
     },

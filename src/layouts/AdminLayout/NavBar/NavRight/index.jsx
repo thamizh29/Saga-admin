@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { Card, ListGroup, Dropdown } from 'react-bootstrap';
-import { Link , NavLink } from 'react-router-dom';
-import PerfectScrollbar from 'react-perfect-scrollbar';
+import React from 'react';
+import { ListGroup, Dropdown } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 import avatar1 from '../../../../assets/images/user/avatar-1.jpg';
 
 const NavRight = () => {
   const user = sessionStorage.getItem('email')
+  const avatar = sessionStorage.getItem('avatar')
   const handleLogout = () => {
     localStorage.clear();
     sessionStorage.clear();
@@ -99,15 +99,12 @@ const NavRight = () => {
         <ListGroup.Item as="li" bsPrefix=" ">
           <Dropdown align={'end'} className="drp-user">
             <Dropdown.Toggle as={Link} variant="link" to="#" id="dropdown-basic">
-            <img src={avatar1} className="img-radius" alt="User Profile" />
+            <img src={avatar || avatar1} className="img-radius" alt="User Profile" />
             </Dropdown.Toggle>
             <Dropdown.Menu align="end" className="profile-notification">
               <div className="pro-head">
                 {/* <img src={avatar1} className="img-radius" alt="User Profile" /> */}
-                <span>{user}</span>
-                <NavLink to={"/signin"} onClick={handleLogout} className="dud-logout" title="Logout">
-                  <i className="feather icon-log-out" />
-                </NavLink>
+                <span>{user || "Your name is Here"}</span>   
               </div>
               <ListGroup as="ul" bsPrefix=" " variant="flush" className="pro-body">
                 <ListGroup.Item as="li" bsPrefix=" ">
@@ -116,9 +113,14 @@ const NavRight = () => {
                   </Link>
                 </ListGroup.Item>
                 <ListGroup.Item as="li" bsPrefix=" ">
-                  <Link to="#" className="dropdown-item">
+                  <Link to="/profile" className="dropdown-item">
                     <i className="feather icon-user" /> Profile
                   </Link>
+                </ListGroup.Item>
+                <ListGroup.Item as="li" bsPrefix=" ">
+                <Link to={"/signin"} onClick={handleLogout} className="dropdown-item" title="Logout">
+                  <i className="feather icon-log-out" /> <span>Log out</span>   
+                </Link>
                 </ListGroup.Item>
               </ListGroup>
             </Dropdown.Menu>

@@ -3,24 +3,22 @@ import { Card, Row, Col, Form, Button, Modal, InputGroup, DropdownButton, Dropdo
 import { NavLink, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useState } from 'react';
-import Cookies from 'js-cookie';
-
+import AlertMessage from 'views/Alert';
 import TurnstileWidget from '../verification/cloudfare';
-import Verify from '../verification/verify';
 //import CryptoJS from 'crypto-js';
 
 const SignUp1 = () => {
   const [email, setemail] = useState('');
-  const [user, setuser] = useState('');
   const [mobile, setmobile] = useState('');
   const [password, setpassword] = useState('');
   const [company, setcompany] = useState('');
   const [turnstileToken, setTurnstileToken] = useState(null);
-  //const [shouldRedirect, setshouldRedirect] = useState(false);
-  const [cpassword, setcpassword] = useState('')
   const [template, setTemplate] = useState('')
   const [selectedCountry, setSelectedCountry] = useState('')
   const [isLoading, setIsLoading] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertBody, setAlertBody] = useState('');
+
   const settemplate = (plan) => {
     setTemplate(plan);
     handleModalClose();
@@ -31,18 +29,28 @@ const SignUp1 = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    setIsLoading(true)
-    const url = `https://${IP}/api/method/sagasuite.customer_api.insert_value?customer_name=${user}&company_name=${company}&email_id=${email}&password=${password}&country_code=${selectedCountry}&phone_number=${mobile}&cf_turnstile_response=${turnstileToken}&subscription_plan=${template}`;
+    
+    const url = `https://${IP}/api/method/sagasuite.customer_api.insert_value?company_name=${company}&email_id=${email}&password=${password}&country_code=${selectedCountry}&phone_number=${mobile}&cf_turnstile_response=${turnstileToken}&subscription_plan=${template}`;
 
     if (turnstileToken) {
+      setIsLoading(true)
     try {
       const result = await axios.post(url);
-      const data = result.data.message[0];
-      if (data === "Exists") {
-        window.alert("User already Exists go to login")
-        navigate('/signin')
-      } else {
+      // const data = result.data.message[0];
+      if (result.data.message[0] === "Exists") {
+           setAlertBody("You already have an account. Please go to the login page.");
+           setShowAlert(true);
+           setTimeout(() => {
+            navigate('/signin');
+        }, 3000);
+      } 
+      else if(result.data.message.Status === "Failed") {
+        // window.alert("To proceed, please verify your email address.")
         navigate('/verify')
+      }
+      else {
+        setAlertBody("something went wrong :(");
+        setShowAlert(true);
       }
     } catch (error) {
       console.log(error);
@@ -50,7 +58,8 @@ const SignUp1 = () => {
       setIsLoading(false);
     }
     } else {
-      window.alert("Please verify the Cloudflare");
+      setAlertBody("To continue using our services, please enable Cloudflare");
+      setShowAlert(true);
     }
   }
 
@@ -63,9 +72,7 @@ const SignUp1 = () => {
   // const Bdata = email;
   // const encrypt = CryptoJS.AES.encrypt(Bdata, SecretKey).toString();
   sessionStorage.setItem('email', email);
-  Cookies.set('user', user, { expires: 0.00139 })
-  //sessionStorage.setItem('template',template)
-
+ 
   const [showModal, setShowModal] = useState(false);
 
   const handleModalOpen = () => setShowModal(true);
@@ -168,12 +175,23 @@ const SignUp1 = () => {
     { name: 'Korea, North', code: '+850', flag: '🇰' },
   ]
   const [searchTerm, setSearchTerm] = useState('');
-  const filteredCountries = countries.filter(country =>
-    country.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const prioritizedCountries = [
+    { name: 'India', code: '+91', flag: '🇮🇳' },
+    ...countries.filter((country) => country.name !== 'India'),
+  ];
+
+  const filteredCountries = prioritizedCountries.filter(
+    (country) =>
+      country.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      country.code.includes(searchTerm)
   );
+
+
+  
   //console.log(selectedCountry)
   return (
     <React.Fragment>
+       {showAlert && <AlertMessage body={alertBody} show={showAlert} onClose={() => setShowAlert(false)} />}
       <div className="auth-wrapper">
         <div className="auth-content">
           <div className="auth-bg">
@@ -194,13 +212,7 @@ const SignUp1 = () => {
                   <Image className="align-items-center" src="src/assets/images/auth-logo.svg" rounded /> 
                   </div>
                   <Form className='auth-form' onSubmit={handleSignup}>
-                    <div className="input-group mb-4">
-                      <Form.Control type="name" className="form-control" onChange={(e) => setuser(e.target.value)} placeholder="User name" required />
-                    </div>
-                    <div className="input-group mb-4">
-                      <Form.Control type="name" className="form-control" onChange={(e) => setcompany(e.target.value)} placeholder="Company name" required />
-                    </div>
-                    <div className="input-group mb-4">
+                  <div className="input-group mb-4">
                       <Form.Control type="email" className="form-control" onChange={(e) => setemail(e.target.value)} placeholder="Email address" required />
                     </div>
                     <div className="input-group mb-4">
@@ -210,6 +222,9 @@ const SignUp1 = () => {
                           <i className={showPassword ? 'feather icon-eye-off' : 'feather icon-eye'} />
                         </Button>
                       </InputGroup>
+                    </div>
+                    <div className="input-group mb-4">
+                      <Form.Control type="name" className="form-control" onChange={(e) => setcompany(e.target.value)} placeholder="Company name" required />
                     </div>
                     <div className="input-group mb-4">
                       <InputGroup>
@@ -236,7 +251,7 @@ const SignUp1 = () => {
                             }
                           </div>
                         </DropdownButton>
-                        <Form.Control type="phonenumber" disabled={!selectedCountry} className="form-control" onChange={(e) => setmobile(e.target.value)} placeholder="Mobile number" required />
+                        <Form.Control type="phonenumber" disabled={!selectedCountry} className="form-control"  maxLength={10} onChange={(e) => setmobile(e.target.value)} placeholder="Mobile number" required />
                       </InputGroup>
                     </div>
 
@@ -285,7 +300,7 @@ const SignUp1 = () => {
                                       <li>Total Drive Size</li>
                                       <li>150GB</li>
                                     </ul>
-                                    <Button variant="primary" onClick={() => settemplate("basic")}>Get</Button>
+                                    <Button variant="primary" onClick={() => settemplate("Basic")}>Get</Button>
                                   </Card.Body>
                                 </center>
                               </Card>
@@ -309,7 +324,7 @@ const SignUp1 = () => {
                                       <li>Total Drive Size</li>
                                       <li>500GB</li>
                                     </ul>
-                                    <Button variant="primary" onClick={() => settemplate("standard")}>Get</Button>
+                                    <Button variant="primary" onClick={() => settemplate("Standard")}>Get</Button>
                                   </Card.Body>
                                 </center>
                               </Card>
@@ -333,7 +348,7 @@ const SignUp1 = () => {
                                       <li>Total Drive Size</li>
                                       <li>2TB</li>
                                     </ul>
-                                    <Button variant="primary" onClick={() => settemplate("premium")}>Get</Button>
+                                    <Button variant="primary" onClick={() => settemplate("Premium")}>Get</Button>
                                   </Card.Body>
                                 </center>
                               </Card>
@@ -348,7 +363,9 @@ const SignUp1 = () => {
                       </Modal>
                     </div>                
                     <div className="input-group mb-4">
+                      <div style={{ transform: 'scale(1.1)', transformOrigin: 'top left' }}>
                       <TurnstileWidget siteKey={Key} onVerify={handleVerify} />
+                      </div>
                     </div>
                     {isLoading ? (
                     <div className="text-center">

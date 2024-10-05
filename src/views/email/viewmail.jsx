@@ -3,11 +3,17 @@ import { Row, Col, Card, Table, ButtonGroup, Button, Spinner} from 'react-bootst
 import { NavLink } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import AlertMessage from 'views/Alert';
+
+
 export default function ViewEmail() {
     const [data, setdata] = useState([]);
     const domain = sessionStorage.getItem('domain')
     const [isLoading, setIsLoading] = useState(false);
     const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertBody, setAlertBody] = useState('');
+    
     const handleEmail = async (e) => {
         //const url =`192.168.1.18:8000/api/method/sagasuite.dom_name_api.fetch_value?user_name=${email}`;
         const url = `https://${IP}/api/method/sagasuite.email_acc_api.fetch_domain?domain_name=${domain}`
@@ -26,12 +32,13 @@ export default function ViewEmail() {
     useEffect(() => {
         handleEmail();
     }, [])
-    const handleDelete = async (email_id,domain_name) => {
+    const handleDelete = async (email_id,domain_name,pk_id) => {
 
-        const url = `https://${IP}/api/method/sagasuite.email_acc_api.remove_email_acc?email_id=${email_id}&domain_name=${domain_name}`
+        const url = `https://${IP}/api/method/sagasuite.email_acc_api.remove_email_acc?email_id=${email_id}&domain_name=${domain_name}&pk_id=${pk_id}`
         try {
             const result = await axios.delete(url);
-            console.log("delete success")
+            setAlertBody("User has been deleted successfully!");
+            setShowAlert(true);
             handleEmail();
 
         }
@@ -41,6 +48,8 @@ export default function ViewEmail() {
     }
     return (
         <React.Fragment>
+            {showAlert && <AlertMessage body={alertBody} show={showAlert} onClose={() => setShowAlert(false)} />}
+            <div className='form-back'>
             <Row>
                 <Col>
                 {isLoading ? (
@@ -76,7 +85,7 @@ export default function ViewEmail() {
                                                                 <NavLink to={"/email/editemail"}>
                                                                     <Button className='text-capitalize' variant="primary"><i className='feather icon-edit'></i>Edit</Button>
                                                                 </NavLink>
-                                                                <Button className='text-capitalize' variant="danger" onClick={() => handleDelete(item.email_id,item.domain_name)}><i className='feather icon-trash'></i>Delete</Button>
+                                                                <Button className='text-capitalize' variant="danger" onClick={() => handleDelete(item.email_id,item.domain_name,item.pk_id)}><i className='feather icon-trash'></i>Delete</Button>
                                                             </ButtonGroup>
                                                         </td>
                                                     </tr>
@@ -91,6 +100,7 @@ export default function ViewEmail() {
                     )}
                 </Col>
             </Row>
+            </div>
         </React.Fragment>
     )
 }

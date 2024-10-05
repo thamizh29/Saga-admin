@@ -7,7 +7,7 @@
   background: $theme-background;
   padding: 10px 20px;
   font-size: 14px;
-  height: auto;
+  height: auto; 
 
   &.form-control-lg {
     font-size: 1.25rem;
@@ -40,6 +40,28 @@
   }
 }
 /* input group start */
+.form-back {
+  padding-left: 100px;
+  padding-right: 100px;
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+/* Medium screens (tablets) */
+@media (max-width: 992px) {
+  .form-back {
+    padding-left: 50px;
+    padding-right: 50px;
+  }
+}
+
+/* Small screens (phones) */
+@media (max-width: 576px) {
+  .form-back {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
 
 .input-group {
   background: $theme-background;
