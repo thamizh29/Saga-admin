@@ -3,17 +3,19 @@ import { Card, Button, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
+import AlertMessage from 'views/Alert';
 import Cookies from 'js-cookie';
 
 export default function Verify() {
     const [verify, setverify] = useState(1);
     const email = sessionStorage.getItem('email')
-    const user = Cookies.get('user');
     //const [navigate,setnavigate] = useState(false);
     const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
     const navigate = useNavigate();
     const [isSendLoading, setIsSendLoading] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertBody, setAlertBody] = useState('');
 
     const handleForm = async (e) => {
         e.preventDefault();
@@ -25,12 +27,15 @@ export default function Verify() {
             if (Number(result.data.message.OTP) === verify) {
                 //Verify the code 
                 const result = await axios.post(`https://${IP}/api/method/sagasuite.customer_api.update_email_ID?email_id=${email}`)
-                // setnavigate(true);
-                window.alert("Email verify successfully")
-                navigate('/signin')
+                setAlertBody("Congratulations! Your email address has been verified successfully.");
+                setShowAlert(true);
+                setTimeout(() => {
+                    navigate('/signin');
+                }, 3000);
             }
             else {
-                window.alert("Invalid code")
+                setAlertBody("The verification code you entered is invalid. Please try again.");
+                setShowAlert(true);
             }
         }
         catch (error) { console.log(error) }
@@ -42,7 +47,9 @@ export default function Verify() {
         setIsLoading(true)
         //update the value email verification is true
         try {
-            const result = await axios.post(`https://${IP}/api/method/sagasuite.customer_api.update?email_id=${email}&customer_name=${user}`);
+            const result = await axios.post(`https://${IP}/api/method/sagasuite.customer_api.update?email_id=${email}`);
+            setAlertBody("A new verification code has been successfully sent to your email.");
+            setShowAlert(true);
         }
         catch (error) {
             console.log(error)
@@ -55,6 +62,7 @@ export default function Verify() {
     // }
     return (
         <React.Fragment>
+             {showAlert && <AlertMessage body={alertBody} show={showAlert} onClose={() => setShowAlert(false)} />}
             <div className="auth-wrapper">
                 <div className="auth-content">
                     <div className="auth-bg">

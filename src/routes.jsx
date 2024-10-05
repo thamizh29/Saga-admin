@@ -106,6 +106,11 @@ const routes = [
       },
       {
         exact: 'true',
+        path: '/groups',
+        element: lazy(() => import('./views/email/groups'))
+      },
+      {
+        exact: 'true',
         path: '/profile',
         element: lazy(() => import('./views/profile/index'))
       },

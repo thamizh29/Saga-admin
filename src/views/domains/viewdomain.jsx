@@ -2,6 +2,7 @@ import React from 'react';
 import { Row, Col, Card, Table, Button, Modal, Spinner } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import AlertMessage from 'views/Alert';
 //import CryptoJS from 'crypto-js';
 
 export default function ViewDomain() {
@@ -10,6 +11,10 @@ export default function ViewDomain() {
     const [show, setShow] = useState(false);
     const [dnsRecords, setDnsRecords] = useState([]);
     const [isLoading, setIsLoading] = useState(false); // New state for loading spinner
+    const [isDLoading, setIsDLoading] = useState(false);
+    const [isVLoading, setIVDLoading] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertBody, setAlertBody] = useState('');
     //const SecretKey = import.meta.env.VITE_SECRET_KEY;
     const email = sessionStorage.getItem('email');
     // const bytes = CryptoJS.AES.decrypt(encrypt, SecretKey);
@@ -19,13 +24,16 @@ export default function ViewDomain() {
 
     // Fetch domain data for user
     const handleDomain = async () => {
-        const url = `https://${IP}/api/method/sagasuite.dom_name_api.fetch_value?user_name=${email}`;
+        setIVDLoading(true)
+        const url = `https://${IP}/api/method/sagasuite.dom_name_api.fetch_value?email_id=${email}`;
         try {
             const result = await axios.get(url);
             setData(result.data.message);
             setDomain(result.data.message[0]?.domain_name || '');
         } catch (error) {
             console.log(error);
+        }finally{
+            setIVDLoading(false)
         }
     };
 
@@ -48,14 +56,16 @@ export default function ViewDomain() {
     }, []);
 
     const handleDelete = async (domainName) => {
-        const url = `https://${IP}/api/method/sagasuite.dom_name_api.remove_domname?user_name=${email}&domain_name=${domainName}`;
+        setIsDLoading(true);
+        const url = `https://${IP}/api/method/sagasuite.dom_name_api.remove_domname?domain_name=${domainName}`;
         try {
             await axios.delete(url);
             console.log("delete success");
+            setAlertBody("The domain was deleted successfully.");
+            setShowAlert(true);
             handleDomain();
         } catch (error) {
             console.log(error);
-            window.alert("server not connected");
         }
     };
 
@@ -70,41 +80,57 @@ export default function ViewDomain() {
 
     return (
         <React.Fragment>
+             {showAlert && <AlertMessage body={alertBody} show={showAlert} onClose={() => setShowAlert(false)} />}
+            <div className='form-back'>
             <Row>
                 <Col>
                     <Card>
                         <Card.Header>
                             <Card.Title as="h5">Domains</Card.Title>
                         </Card.Header>
-                        <Card.Body>
-                            <Table responsive hover>
-                                <thead>
-                                    <tr>
-                                        <th>Domain Name</th>
-                                        <th>Date and Time</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {data.map((item, index) => (
-                                        item.domain_name && (
-                                            <tr key={index}>
-                                                <td>{item.domain_name}</td>
-                                                <td>{item.creation}</td>
-                                                <td>
-                                                    <Button className="text-capitalize" variant="danger" onClick={() => handleDelete(item.domain_name)}>
-                                                        <i className="feather icon-trash"></i> Delete
-                                                    </Button>
-                                                    <Button className="text-capitalize" variant="secondary" onClick={() => handleShow(item.domain_name)}>
-                                                        <i className="feather icon-settings"></i> DNS
-                                                    </Button>
-                                                </td>
-                                            </tr>
-                                        )
-                                    ))}
-                                </tbody>
-                            </Table>
-                        </Card.Body>
+                        {isVLoading ? (
+                            <div className="text-center">
+                                <Spinner animation="border" role="status" aria-label="Loading..." />
+                            </div>
+                        ) : (
+                            <Card.Body>
+                                <Table responsive hover>
+                                    <thead>
+                                        <tr>
+                                            <th>Domain Name</th>
+                                            <th>Date and Time</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {data.map((item, index) => (
+                                            item.domain_name && (
+                                                <tr key={index}>
+                                                    <td>{item.domain_name}</td>
+                                                    <td>{item.creation}</td>
+                                                    {isDLoading ? (
+                                                            <div className="text-center">
+                                                            <Spinner animation="border" role="status" aria-label="Loading..." />
+                                                        </div>
+                                                        ) : (
+                                                    <td>
+                                                       
+                                                            <Button className="text-capitalize" variant="danger" onClick={() => handleDelete(item.domain_name)}>
+                                                                <i className="feather icon-trash"></i> Delete
+                                                            </Button>
+                                                        
+                                                        <Button className="text-capitalize" variant="secondary" onClick={() => handleShow(item.domain_name)}>
+                                                            <i className="feather icon-settings"></i> DNS
+                                                        </Button>
+                                                    </td>
+                                                    )}
+                                                </tr>
+                                            )
+                                        ))}
+                                    </tbody>
+                                </Table>
+                            </Card.Body>
+                        )}
                     </Card>
                 </Col>
             </Row>
@@ -150,6 +176,7 @@ export default function ViewDomain() {
                     </Button>
                 </Modal.Footer>
             </Modal>
+            </div>
         </React.Fragment>
     );
 }
