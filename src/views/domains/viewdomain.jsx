@@ -141,7 +141,7 @@ export default function ViewDomain() {
             </Row>
 
             {/* DNS Records Modal */}
-            <Modal show={show} onHide={handleClose} style={{overflowWrap: 'break-word'}} dialogClassName="modal-90w">
+            <Modal show={show} onHide={handleClose}  dialogClassName="modal-90w">
                 <Modal.Header closeButton>
                     <Modal.Title>DNS Records for {domain}</Modal.Title>
                 </Modal.Header>
@@ -153,7 +153,7 @@ export default function ViewDomain() {
                             </Spinner>
                         </div>
                     ) : (
-                        <Table striped responsive>
+                        <Table style={{overflowWrap: 'break-word'}} striped responsive>
                             <thead>
                                 <tr>
                                     <th>Name</th>
