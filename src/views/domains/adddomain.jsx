@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import AlertMessage from 'views/Alert';
+import { useNavigate } from 'react-router-dom';
 //import CryptoJS from 'crypto-js';
 
 
@@ -18,10 +19,12 @@ export default function AddDomain(){
     const [isLoading, setIsLoading] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const [alertBody, setAlertBody] = useState('');
+    const [alertHead, setAlertHead] = useState('Alert')
     const [data,setdata]=useState('')
+    const navigate = useNavigate()
 
     const Domain = async () => {
-      const url = `https://${IP}/api/method/sagasuite.dom_name_api.plan_details?plan=${template}`
+      const url = `http://${IP}/api/method/sagasuite.dom_name_api.plan_details?plan=${template}`
       try {
         const result = await axios.get(url);
         setdata(result.data.message)
@@ -38,7 +41,7 @@ export default function AddDomain(){
     const handledomain = async (e) => {
       e.preventDefault();
       setIsLoading(true)
-        const url = `https://${IP}/api/method/sagasuite.dom_name_api.insert_value?domain_name=${domain}&email_id=${email}&templates=${template}`;
+        const url = `${IP}/api/method/sagasuite.dom_name_api.insert_value?domain_name=${domain}&email_id=${email}&templates=${template}`;
         try {
             const result = await axios.post(url);
             if (result.data.message.Message === "This domain name was already exists") {
@@ -50,8 +53,13 @@ export default function AddDomain(){
               setShowAlert(true);
             }
             else if(result.data.message.Message === "Domain added successfully") {
+              setAlertHead("Success")
               setAlertBody("Your domain has been added successfully.");
               setShowAlert(true);
+              setTimeout(() => {
+                navigate('/dashboard')
+            }, 2000);
+              
             }
             else{
               setAlertBody("something went wrong :(");
@@ -68,7 +76,7 @@ export default function AddDomain(){
     }
   return (
     <React.Fragment>
-      {showAlert && <AlertMessage body={alertBody} show={showAlert} onClose={() => setShowAlert(false)} />}
+      {showAlert && <AlertMessage color={alertHead} head={alertHead} body={alertBody} show={showAlert} onClose={() => setShowAlert(false)} />}
       <Row>
         <Col sm={12}>
           <Card>

@@ -43,9 +43,9 @@ const Plans = () => {
             <Col>
                 <Card className="card-lift--hover shadow border-0" style={{ height: "30rem" }}>
                     <Card.Body className="text-center d-flex flex-column justify-content-center align-items-center">
-                        <Card.Title style={{ fontSize: '1.5rem', fontWeight: 'bold', borderBottom: '2px solid #333', paddingBottom: '10px', width: '100%' }}>Standard</Card.Title>
+                        <Card.Title style={{ fontSize: '1.5rem', fontWeight: 'bold', borderBottom: '2px solid #333', paddingBottom: '10px', width: '100%' }}>{template === "Standard" ? <Activate/> : "Standard"}</Card.Title>
                         <Card.Text style={{ fontSize: '1.1rem' }}>
-                        {template === "Standard" ? <Activate/> : "Standard"}
+                        Feature
                         </Card.Text>
                         <ul style={{ listStyle: "none", padding: 0, fontSize: '1rem' }}>
                             <li>Total Mail ID</li>
@@ -67,9 +67,9 @@ const Plans = () => {
             <Col>
                 <Card className="card-lift--hover shadow border-0" style={{ height: "30rem" }}>
                     <Card.Body className="text-center d-flex flex-column justify-content-center align-items-center">
-                        <Card.Title style={{ fontSize: '1.5rem', fontWeight: 'bold', borderBottom: '2px solid #333', paddingBottom: '10px', width: '100%' }}>Premium</Card.Title>
+                        <Card.Title style={{ fontSize: '1.5rem', fontWeight: 'bold', borderBottom: '2px solid #333', paddingBottom: '10px', width: '100%' }}> {template === "Premium" ? <Activate/> : "Premium"}</Card.Title>
                         <Card.Text style={{ fontSize: '1.1rem' }}>
-                        {template === "Premium" ? <Activate/> : "Premium"}
+                         Feature
                         </Card.Text>
                         <ul style={{ listStyle: "none", padding: 0, fontSize: '1rem' }}>
                             <li>Total Mail ID</li>

@@ -76,23 +76,8 @@ const routes = [
       },
       {
         exact: 'true',
-        path: '/domains/editdomain',
-        element: lazy(() => import('./views/domains/editdomain'))
-      },
-      {
-        exact: 'true',
-        path: '/email/dnsrecords',
-        element: lazy(() => import('./views/domains/dns'))
-      },
-      {
-        exact: 'true',
         path: '/email/users',
         element: lazy(() => import('./views/email/viewmail'))
-      },
-      {
-        exact: 'true',
-        path: '/email/editemail',
-        element: lazy(() => import('./views/email/editmail'))
       },
       {
         exact: 'true',
@@ -102,7 +87,7 @@ const routes = [
       {
         exact: 'true',
         path: '/plans',
-        element: lazy(() => import('./views/plans/index'))
+        element: lazy(() => import('./views/price/index'))
       },
       {
         exact: 'true',

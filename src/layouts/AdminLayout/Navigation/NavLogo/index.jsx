@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-
+import { Image } from 'react-bootstrap';
 import { ConfigContext } from '../../../../contexts/ConfigContext';
 import * as actionType from '../../../../store/actions';
 
@@ -17,11 +17,11 @@ const NavLogo = () => {
   return (
     <React.Fragment>
       <div className="navbar-brand header-logo">
-        <Link to="#" className="b-brand">
-          <div className="b-bg">
-            <i className="feather icon-trending-up" />
+        <Link to="/dashboard" className="b-brand">
+        <div>
+          <Image style={{paddingTop:'10px'}} width={180} className="align-items-center" src="src/assets/images/logo-head.png" alt='logo' rounded />
           </div>
-          <span className="b-title">Saga Suite</span>
+          
         </Link>
         <Link to="#" className={toggleClass.join(' ')} id="mobile-collapse" onClick={() => dispatch({ type: actionType.COLLAPSE_MENU })}>
           <span />
