@@ -141,7 +141,7 @@ export default function ViewDomain() {
             </Row>
 
             {/* DNS Records Modal */}
-            <Modal show={show} onHide={handleClose} size="lg">
+            <Modal show={show} onHide={handleClose} style={{overflowWrap: 'break-word'}} dialogClassName="modal-90w">
                 <Modal.Header closeButton>
                     <Modal.Title>DNS Records for {domain}</Modal.Title>
                 </Modal.Header>
