@@ -24,7 +24,7 @@ export default function AddDomain(){
     const navigate = useNavigate()
 
     const Domain = async () => {
-      const url = `http://${IP}/api/method/sagasuite.dom_name_api.plan_details?plan=${template}`
+      const url = `${IP}/api/method/sagasuite.dom_name_api.plan_details?plan=${template}`
       try {
         const result = await axios.get(url);
         setdata(result.data.message)
