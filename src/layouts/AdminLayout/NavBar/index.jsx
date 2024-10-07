@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import NavLeft from './NavLeft';
 import NavRight from './NavRight';
-
+import { Image } from 'react-bootstrap';
 import { ConfigContext } from '../../../contexts/ConfigContext';
 import * as actionType from '../../../store/actions';
 
@@ -34,18 +34,18 @@ const NavBar = () => {
     moreClass = [...moreClass, 'on'];
     collapseClass = [...collapseClass, 'show'];
   }
-
+ 
   let navBar = (
     <React.Fragment>
       <div className="m-header">
         <Link to="#" className={toggleClass.join(' ')} id="mobile-collapse" onClick={navToggleHandler}>
           <span />
         </Link>
-        <Link to="#" className="b-brand">
-          <div className="b-bg">
-            <i className="feather icon-trending-up" />
+        <Link to="/dashboard" className="b-brand">
+          <div>
+          <Image style={{paddingTop:'10px'}} width={180} className="align-items-center" src="src/assets/images/logo-head.png" alt='logo' rounded />
           </div>
-          <span className="b-title">Saga suite</span>
+         
         </Link>
         <Link to="#" className={moreClass.join(' ')} onClick={() => setMoreToggle(!moreToggle)}>
           <i className="feather icon-more-vertical" />

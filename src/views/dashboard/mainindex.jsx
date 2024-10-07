@@ -1,7 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Row, Col, Card} from 'react-bootstrap';
+import axios from 'axios';
 
 export default function DashDefault() {
+    const [domain,setdomain] = useState([]);
+    const email =sessionStorage.getItem('email')
+    const IP = import.meta.env.VITE_BACKEND_IP_ADDRESS;
+    const handleDomain = async () => {
+        const url = `${IP}/api/method/sagasuite.dom_name_api.fetch_value?email_id=${email}`;
+        try {
+            const result = await axios.get(url);
+            const domainNames = result.data.message.map(item => item.domain_name);
+            //setDomain(result.data.message[0]?.domain_name || '');
+            setdomain(domainNames)
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    useEffect(() => {
+        handleDomain();
+    }, []);
+
+    sessionStorage.setItem('domain', JSON.stringify(domain));
     return (
 
         <React.Fragment>

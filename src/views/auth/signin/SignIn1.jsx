@@ -17,6 +17,8 @@ const Signin1 = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [alertBody, setAlertBody] = useState('');
+  const [alertHead, setAlertHead] = useState('Alert');
+  //const color = "primary";
   const navigate = useNavigate();
 
   //Alert message for inncorrect password
@@ -26,7 +28,7 @@ const Signin1 = () => {
    
 
 
-    const url = `https://${IP}/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&password=${password}&cf_turnstile_response=${turnstileToken}`;
+    const url = `${IP}/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&password=${password}&cf_turnstile_response=${turnstileToken}`;
     if (turnstileToken) {
       setIsLoading(true)
       try {
@@ -37,14 +39,13 @@ const Signin1 = () => {
           const fbUser = message.frappe_response.Fb;
             // Email check
             if (fbUser.email_id === email) {
-              console.log("enter email")
               // Password check
               if (fbUser.pw === password) {
-                console.log("enter pass")
                 // Email verification check
                 if (fbUser.e_vf === "1") {
+
                   if (message.frappe_response.Auth) {
-                    console.log("enter auth")
+                  
                     const authUser = message.frappe_response.Auth;
 
                     if (authUser.user.email === email) {
@@ -66,7 +67,7 @@ const Signin1 = () => {
                   setShowAlert(true);
                   setTimeout(() => {
                     navigate('/verify');
-                  }, 3000);
+                  }, 2000);
                 }
               } else {
                 setAlertBody("Incorrect password. Please try again");
@@ -75,13 +76,16 @@ const Signin1 = () => {
             } else {
                setAlertBody("No user found");
                setShowAlert(true);
+               setTimeout(() => {
+                navigate('/signup');
+              }, 2000);
             }
         }else if (message?.Message === "User not found") {
                 setAlertBody("You don’t have an account. Please sign up to continue!");
                 setShowAlert(true);
                 setTimeout(() => {
                   navigate('/signup');
-                }, 3000);
+                }, 2000);
                
         } else if (message?.Status === "Failed") {
 
@@ -94,10 +98,15 @@ const Signin1 = () => {
                 setShowAlert(true);
                 setTimeout(() => {
                   navigate('/verify');
-                }, 3000);
+                }, 2000);
                 
           }
-        } else {
+        }
+        else if (message?.Message === "CAPTCHA validation failed") {
+          setAlertBody("Captcha faild");
+          setShowAlert(true);
+        }
+        else {
             setAlertBody("Something went wrong :(");
             setShowAlert(true);
         }
@@ -125,7 +134,7 @@ const Signin1 = () => {
 
   return (
     <React.Fragment>
-       {showAlert && <AlertMessage body={alertBody} show={showAlert} onClose={() => setShowAlert(false)} />}
+       {showAlert && <AlertMessage  head={alertHead} body={alertBody} show={showAlert} onClose={() => setShowAlert(false)} />}
       <div className="auth-wrapper">
         <div className="auth-content">
           <div className="auth-bg">

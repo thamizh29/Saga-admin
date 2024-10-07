@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Card, Table, Button, Modal, Spinner } from 'react-bootstrap';
+import { Row, Col, Card, Table, Button, Modal, Spinner, Dropdown, DropdownButton } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import AlertMessage from 'views/Alert';
@@ -7,7 +7,7 @@ import AlertMessage from 'views/Alert';
 
 export default function ViewDomain() {
     const [data, setData] = useState([]);
-    const [domain, setDomain] = useState('');
+    const [domain, setDomain] = useState([]);
     const [show, setShow] = useState(false);
     const [dnsRecords, setDnsRecords] = useState([]);
     const [isLoading, setIsLoading] = useState(false); // New state for loading spinner
@@ -15,6 +15,9 @@ export default function ViewDomain() {
     const [isVLoading, setIVDLoading] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const [alertBody, setAlertBody] = useState('');
+    const [alertHead, setAlertHead] = useState('Alert');
+    const [loadingRow, setLoadingRow] = useState(null);
+    
     //const SecretKey = import.meta.env.VITE_SECRET_KEY;
     const email = sessionStorage.getItem('email');
     // const bytes = CryptoJS.AES.decrypt(encrypt, SecretKey);
@@ -25,11 +28,10 @@ export default function ViewDomain() {
     // Fetch domain data for user
     const handleDomain = async () => {
         setIVDLoading(true)
-        const url = `https://${IP}/api/method/sagasuite.dom_name_api.fetch_value?email_id=${email}`;
+        const url = `${IP}/api/method/sagasuite.dom_name_api.fetch_value?email_id=${email}`;
         try {
             const result = await axios.get(url);
             setData(result.data.message);
-            setDomain(result.data.message[0]?.domain_name || '');
         } catch (error) {
             console.log(error);
         }finally{
@@ -40,7 +42,7 @@ export default function ViewDomain() {
     // Fetch DNS records for selected domain
     const handleFetchDNS = async (domainName) => {
         setIsLoading(true); // Show spinner while fetching
-        const url = `https://${IP}/api/method/sagasuite.dom_name_api.fetch_dnr?domain_name=${domainName}`;
+        const url = `${IP}/api/method/sagasuite.dom_name_api.fetch_dnr?domain_name=${domainName}`;
         try {
             const result = await axios.get(url);
             setDnsRecords(result.data.message);
@@ -56,16 +58,19 @@ export default function ViewDomain() {
     }, []);
 
     const handleDelete = async (domainName) => {
-        setIsDLoading(true);
-        const url = `https://${IP}/api/method/sagasuite.dom_name_api.remove_domname?domain_name=${domainName}`;
+        setLoadingRow(domainName);
+        const url = `${IP}/api/method/sagasuite.dom_name_api.remove_domname?domain_name=${domainName}`;
         try {
             await axios.delete(url);
-            console.log("delete success");
+            setAlertHead("Success")
             setAlertBody("The domain was deleted successfully.");
             setShowAlert(true);
             handleDomain();
         } catch (error) {
             console.log(error);
+        }finally{
+            setLoadingRow(null);
+
         }
     };
 
@@ -76,11 +81,11 @@ export default function ViewDomain() {
         setShow(true);
     };
 
-    sessionStorage.setItem('domain', domain);
-
+    //sessionStorage.setItem('domain',JSON.stringify(domain));
+   
     return (
         <React.Fragment>
-             {showAlert && <AlertMessage body={alertBody} show={showAlert} onClose={() => setShowAlert(false)} />}
+             {showAlert && <AlertMessage head={alertHead} body={alertBody} show={showAlert} onClose={() => setShowAlert(false)} />}
             <div className='form-back'>
             <Row>
                 <Col>
@@ -108,11 +113,11 @@ export default function ViewDomain() {
                                                 <tr key={index}>
                                                     <td>{item.domain_name}</td>
                                                     <td>{item.creation}</td>
-                                                    {isDLoading ? (
-                                                            <div className="text-center">
-                                                            <Spinner animation="border" role="status" aria-label="Loading..." />
-                                                        </div>
-                                                        ) : (
+                                                    {loadingRow === item.domain_name ? (
+                                <div className="text-center">
+                                    <Spinner animation="border" role="status" aria-label="Loading..." />
+                                </div>
+                            ) : (
                                                     <td>
                                                        
                                                             <Button className="text-capitalize" variant="danger" onClick={() => handleDelete(item.domain_name)}>
@@ -126,7 +131,7 @@ export default function ViewDomain() {
                                                     )}
                                                 </tr>
                                             )
-                                        ))}
+                                        ))} 
                                     </tbody>
                                 </Table>
                             </Card.Body>

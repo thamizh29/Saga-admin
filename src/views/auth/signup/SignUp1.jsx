@@ -18,6 +18,7 @@ const SignUp1 = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [alertBody, setAlertBody] = useState('');
+  const [alertHead, setAlertHead] = useState('Alert');
 
   const settemplate = (plan) => {
     setTemplate(plan);
@@ -30,7 +31,7 @@ const SignUp1 = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     
-    const url = `https://${IP}/api/method/sagasuite.customer_api.insert_value?company_name=${company}&email_id=${email}&password=${password}&country_code=${selectedCountry}&phone_number=${mobile}&cf_turnstile_response=${turnstileToken}&subscription_plan=${template}`;
+    const url = `${IP}/api/method/sagasuite.customer_api.insert_value?company_name=${company}&email_id=${email}&password=${password}&country_code=${selectedCountry}&phone_number=${mobile}&cf_turnstile_response=${turnstileToken}&subscription_plan=${template}`;
 
     if (turnstileToken) {
       setIsLoading(true)
@@ -44,7 +45,13 @@ const SignUp1 = () => {
             navigate('/signin');
         }, 3000);
       } 
-      else if(result.data.message.Status === "Failed") {
+      else if(result.data.message.Status === "CFailed") {
+        // window.alert("To proceed, please verify your email address.")
+        setAlertBody("Cloudflare verification faild");
+        setShowAlert(true);
+        window.location.reload();
+      }
+      else if(result.data.message.Status === "VFailed") {
         // window.alert("To proceed, please verify your email address.")
         navigate('/verify')
       }
@@ -191,7 +198,7 @@ const SignUp1 = () => {
   //console.log(selectedCountry)
   return (
     <React.Fragment>
-       {showAlert && <AlertMessage body={alertBody} show={showAlert} onClose={() => setShowAlert(false)} />}
+       {showAlert && <AlertMessage  head={alertHead} body={alertBody} show={showAlert} onClose={() => setShowAlert(false)} />}
       <div className="auth-wrapper">
         <div className="auth-content">
           <div className="auth-bg">
@@ -213,7 +220,7 @@ const SignUp1 = () => {
                   </div>
                   <Form className='auth-form' onSubmit={handleSignup}>
                   <div className="input-group mb-4">
-                      <Form.Control type="email" className="form-control" onChange={(e) => setemail(e.target.value)} placeholder="Email address" required />
+                      <Form.Control type="email" className="form-control"  onChange={(e) => setemail(e.target.value.toLowerCase())}  placeholder="Email address" required />
                     </div>
                     <div className="input-group mb-4">
                       <InputGroup>
