@@ -141,7 +141,7 @@ export default function ViewDomain() {
             </Row>
 
             {/* DNS Records Modal */}
-            <Modal show={show} onHide={handleClose}  dialogClassName="modal-90w">
+            <Modal show={show} onHide={handleClose} size="xxl">
                 <Modal.Header closeButton>
                     <Modal.Title>DNS Records for {domain}</Modal.Title>
                 </Modal.Header>
