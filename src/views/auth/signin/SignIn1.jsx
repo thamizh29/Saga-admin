@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card, Spinner, Form, InputGroup, Button, Image } from 'react-bootstrap';
 import { NavLink, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -18,6 +18,7 @@ const Signin1 = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertBody, setAlertBody] = useState('');
   const [alertHead, setAlertHead] = useState('Alert');
+  const widgetId = useRef(null);
   //const color = "primary";
   const navigate = useNavigate();
 
@@ -25,7 +26,7 @@ const Signin1 = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-   
+
 
 
     const url = `${IP}/api/method/sagasuite.customer_api.fetch_value?email_id=${email}&password=${password}&cf_turnstile_response=${turnstileToken}`;
@@ -37,78 +38,88 @@ const Signin1 = () => {
 
         if (message.Status === "Success" && message.frappe_response.Fb) {
           const fbUser = message.frappe_response.Fb;
-            // Email check
-            if (fbUser.email_id === email) {
-              // Password check
-              if (fbUser.pw === password) {
-                // Email verification check
-                if (fbUser.e_vf === "1") {
+          // Email check
+          if (fbUser.email_id === email) {
+            // Password check
+            if (fbUser.pw === password) {
+              // Email verification check
+              if (fbUser.e_vf === "1") {
 
-                  if (message.frappe_response.Auth) {
-                  
-                    const authUser = message.frappe_response.Auth;
+                if (message.frappe_response.Auth) {
 
-                    if (authUser.user.email === email) {
-                      // Save user company and navigate to dashboard
-                      sessionStorage.setItem("company", authUser.user.groups[0]?.name || "Unknown Company");
-                      sessionStorage.setItem("avatar", authUser.user.avatar);
-                      Cookies.set('template', fbUser.sub_pl, { expires: 1 });
-                      navigate('/dashboard');
-                    } else {
-                      setAlertBody("Authentication error");
-                      setShowAlert(true);
-                    }
+                  const authUser = message.frappe_response.Auth;
+
+                  if (authUser.user.email === email) {
+                    // Save user company and navigate to dashboard
+                    sessionStorage.setItem("company", authUser.user.groups[0]?.name || "Unknown Company");
+                    sessionStorage.setItem("avatar", authUser.user.avatar);
+                    Cookies.set('template', fbUser.sub_pl, { expires: 1 });
+                    navigate('/dashboard');
                   } else {
-                      setAlertBody("Authentication faild");
-                      setShowAlert(true);
+                    setAlertBody("Authentication error");
+                    setShowAlert(true);
+                    window.turnstile.reset(widgetId.current);
+                    setTurnstileToken(null)
                   }
                 } else {
-                  setAlertBody("Your email needs verification to access this feature");
+                  setAlertBody("Authentication faild");
                   setShowAlert(true);
-                  setTimeout(() => {
-                    navigate('/verify');
-                  }, 2000);
+                  window.turnstile.reset(widgetId.current);
+                  setTurnstileToken(null)
                 }
               } else {
-                setAlertBody("Incorrect password. Please try again");
-                setShowAlert(true);        
-              }
-            } else {
-               setAlertBody("No user found");
-               setShowAlert(true);
-               setTimeout(() => {
-                navigate('/signup');
-              }, 2000);
-            }
-        }else if (message?.Message === "User not found") {
-                setAlertBody("You don’t have an account. Please sign up to continue!");
-                setShowAlert(true);
-                setTimeout(() => {
-                  navigate('/signup');
-                }, 2000);
-               
-        } else if (message?.Status === "Failed") {
-
-            if (message?.Message === "Invalid Password") {
-                setAlertBody("Incorrect password. Please try again");
-                setShowAlert(true);
-          }
-          else if (message?.Message === "Email ID doesn't verified") {
                 setAlertBody("Your email needs verification to access this feature");
                 setShowAlert(true);
                 setTimeout(() => {
                   navigate('/verify');
                 }, 2000);
-                
+              }
+            } else {
+              setAlertBody("Incorrect password. Please try again");
+              setShowAlert(true);
+              window.turnstile.reset(widgetId.current);
+              setTurnstileToken(null)
+            }
+          } else {
+            setAlertBody("No user found");
+            setShowAlert(true);
+            setTimeout(() => {
+              navigate('/signup');
+            }, 2000);
+          }
+        } else if (message?.Message === "User not found") {
+          setAlertBody("You don’t have an account. Please sign up to continue!");
+          setShowAlert(true);
+          setTimeout(() => {
+            navigate('/signup');
+          }, 2000);
+
+        } else if (message?.Status === "Failed") {
+
+          if (message?.Message === "Invalid Password") {
+            setAlertBody("Incorrect password. Please try again");
+            setShowAlert(true);
+            window.turnstile.reset(widgetId.current);
+            setTurnstileToken(null)
+          }
+          else if (message?.Message === "Email ID doesn't verified") {
+            setAlertBody("Your email needs verification to access this feature");
+            setShowAlert(true);
+            setTimeout(() => {
+              navigate('/verify');
+            }, 2000);
+
           }
         }
         else if (message?.Message === "CAPTCHA validation failed") {
           setAlertBody("Captcha faild");
           setShowAlert(true);
+          window.turnstile.reset(widgetId.current);
+          setTurnstileToken(null)
         }
         else {
-            setAlertBody("Something went wrong :(");
-            setShowAlert(true);
+          setAlertBody("Something went wrong :(");
+          setShowAlert(true);
         }
       } catch (error) {
         console.error("Error processing request:", error);
@@ -134,7 +145,7 @@ const Signin1 = () => {
 
   return (
     <React.Fragment>
-       {showAlert && <AlertMessage  head={alertHead} body={alertBody} show={showAlert} onClose={() => setShowAlert(false)} />}
+      {showAlert && <AlertMessage head={alertHead} body={alertBody} show={showAlert} onClose={() => setShowAlert(false)} />}
       <div className="auth-wrapper">
         <div className="auth-content">
           <div className="auth-bg">
@@ -143,7 +154,7 @@ const Signin1 = () => {
             <span className="r s" />
             <span className="r" />
           </div>
-         
+
           <Card className="borderless text-center">
             <Card.Body>
               <div className="mb-4">
@@ -153,7 +164,7 @@ const Signin1 = () => {
               <div className="mb-4 align-items-center">
                 <Image className="align-items-center" src="src/assets/images/auth-logo.svg" rounded />
               </div>
-             
+
               {errorMessage && <AlertMessage body={alertBody} show={showAlert} onClose={() => setShowAlert(false)} />}
               <Form className='auth-form' onSubmit={handleSubmit}>
                 <div className="input-group mb-4">
@@ -182,7 +193,7 @@ const Signin1 = () => {
                 </div>
                 <div className="input-group mb-4">
                   <div style={{ transform: 'scale(1.1)', transformOrigin: 'top left' }}>
-                    <TurnstileWidget siteKey={Key} onVerify={handleVerify} />
+                    <TurnstileWidget siteKey={Key} onVerify={handleVerify} ref={widgetId} />
                   </div>
                 </div>
                 {isLoading ? (<div className="text-center">

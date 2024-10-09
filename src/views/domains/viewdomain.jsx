@@ -17,7 +17,7 @@ export default function ViewDomain() {
     const [alertBody, setAlertBody] = useState('');
     const [alertHead, setAlertHead] = useState('Alert');
     const [loadingRow, setLoadingRow] = useState(null);
-    
+
     //const SecretKey = import.meta.env.VITE_SECRET_KEY;
     const email = sessionStorage.getItem('email');
     // const bytes = CryptoJS.AES.decrypt(encrypt, SecretKey);
@@ -34,7 +34,7 @@ export default function ViewDomain() {
             setData(result.data.message);
         } catch (error) {
             console.log(error);
-        }finally{
+        } finally {
             setIVDLoading(false)
         }
     };
@@ -68,7 +68,7 @@ export default function ViewDomain() {
             handleDomain();
         } catch (error) {
             console.log(error);
-        }finally{
+        } finally {
             setLoadingRow(null);
 
         }
@@ -82,105 +82,125 @@ export default function ViewDomain() {
     };
 
     //sessionStorage.setItem('domain',JSON.stringify(domain));
-   
+
     return (
         <React.Fragment>
-             {showAlert && <AlertMessage head={alertHead} body={alertBody} show={showAlert} onClose={() => setShowAlert(false)} />}
+            {showAlert && <AlertMessage head={alertHead} body={alertBody} show={showAlert} onClose={() => setShowAlert(false)} />}
             <div className='form-back'>
-            <Row>
-                <Col>
-                    <Card>
-                        <Card.Header>
-                            <Card.Title as="h5">Domains</Card.Title>
-                        </Card.Header>
-                        {isVLoading ? (
-                            <div className="text-center">
-                                <Spinner animation="border" role="status" aria-label="Loading..." />
-                            </div>
-                        ) : (
-                            <Card.Body>
-                                <Table responsive hover>
-                                    <thead>
-                                        <tr>
-                                            <th>Domain Name</th>
-                                            <th>Date and Time</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {data.map((item, index) => (
-                                            item.domain_name && (
-                                                <tr key={index}>
-                                                    <td>{item.domain_name}</td>
-                                                    <td>{item.creation}</td>
-                                                    {loadingRow === item.domain_name ? (
+                <Row>
+                    <Col>
+                        <Card>
+                            <Card.Header>
+                                <Card.Title as="h5">Domains</Card.Title>
+                            </Card.Header>
+                            {isVLoading ? (
                                 <div className="text-center">
                                     <Spinner animation="border" role="status" aria-label="Loading..." />
                                 </div>
                             ) : (
-                                                    <td>
-                                                       
-                                                            <Button className="text-capitalize" variant="danger" onClick={() => handleDelete(item.domain_name)}>
-                                                                <i className="feather icon-trash"></i> Delete
-                                                            </Button>
-                                                        
-                                                        <Button className="text-capitalize" variant="secondary" onClick={() => handleShow(item.domain_name)}>
-                                                            <i className="feather icon-settings"></i> DNS
-                                                        </Button>
-                                                    </td>
-                                                    )}
-                                                </tr>
-                                            )
-                                        ))} 
-                                    </tbody>
-                                </Table>
-                            </Card.Body>
-                        )}
-                    </Card>
-                </Col>
-            </Row>
+                                <Card.Body>
+                                    <Table responsive hover>
+                                        <thead>
+                                            <tr>
+                                                <th>Domain Name</th>
+                                                <th>Date and Time</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {data.map((item, index) => (
+                                                item.domain_name && (
+                                                    <tr key={index}>
+                                                        <td>{item.domain_name}</td>
+                                                        <td>{item.creation}</td>
+                                                        {loadingRow === item.domain_name ? (
+                                                            <div className="text-center">
+                                                                <Spinner animation="border" role="status" aria-label="Loading..." />
+                                                            </div>
+                                                        ) : (
+                                                            <td>
 
-            {/* DNS Records Modal */}
-            <Modal show={show} onHide={handleClose} size="xxl">
-                <Modal.Header closeButton>
-                    <Modal.Title>DNS Records for {domain}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {isLoading ? (
-                        <div className="text-center">
-                            <Spinner animation="border" role="status">
-                                <span className="sr-only">Loading...</span>
-                            </Spinner>
-                        </div>
-                    ) : (
-                        <Table style={{overflowWrap: 'break-word'}} striped responsive>
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Type</th>
-                                    <th>Correct Data</th>
-                                    <th>Current State</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {dnsRecords.map((record, index) => (
-                                    <tr key={index}>
-                                        <td>{record.Name}</td>
-                                        <td>{record.Type}</td>
-                                        <td>{record['Correct Data']}</td>
-                                        <td>{record['Current State']}</td>
+                                                                <Button className="text-capitalize" variant="danger" onClick={() => handleDelete(item.domain_name)}>
+                                                                    <i className="feather icon-trash"></i> Delete
+                                                                </Button>
+
+                                                                <Button className="text-capitalize" variant="secondary" onClick={() => handleShow(item.domain_name)}>
+                                                                    <i className="feather icon-settings"></i> DNS
+                                                                </Button>
+                                                            </td>
+                                                        )}
+                                                    </tr>
+                                                )
+                                            ))}
+                                        </tbody>
+                                    </Table>
+                                </Card.Body>
+                            )}
+                        </Card>
+                    </Col>
+                </Row>
+
+                {/* DNS Records Modal */}
+                <Modal show={show} onHide={handleClose} dialogClassName="modal-fullscreen">
+                    <Modal.Header closeButton>
+                        <Modal.Title>DNS Records for {domain}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        {isLoading ? (
+                            <div className="text-center">
+                                <Spinner animation="border" role="status">
+                                    <span className="sr-only">Loading...</span>
+                                </Spinner>
+                            </div>
+                        ) : (
+                            <Table striped responsive>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Type</th>
+                                        <th>Correct Data</th>
+                                        <th>Current State</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </Table>
-                    )}
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+                                </thead>
+                                <tbody className="dns-table-content">
+                                    {dnsRecords.map((record, index) => (
+                                        <tr key={index}>
+                                            <td>
+                                                <div style={{ wordBreak: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal' }}>
+                                                    {record.Name}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div style={{ wordBreak: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal' }}>
+                                                    {record.Type}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div style={{ wordBreak: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal' }}>
+                                                    {record['Correct Data']}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div style={{ wordBreak: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal' }}>
+                                                    {!record['Current State'] ? (
+                                                        <i className="feather icon-check"></i>
+                                                    ) : (
+                                                        record['Current State']
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </Table>
+                        )}
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleClose}>
+                            Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
             </div>
         </React.Fragment>
     );

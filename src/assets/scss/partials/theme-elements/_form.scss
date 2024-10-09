@@ -165,3 +165,26 @@ select.form-control-lg:not([size]):not([multiple]) {
   margin-top: 0;
   padding-top: 0.25em;
 }
+.modal-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 100px;
+  width: 90vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  z-index: 1050; /* Bootstrap default z-index for modals */
+}
+
+.modal-fullscreen .modal-content {
+  height: 100%; /* Ensures the content takes full height */
+  border: none;
+  border-radius: 0; /* Remove border radius for full-screen effect */
+}
+.dns-table-content td {
+  word-break: break-word;
+  // overflow-wrap: break-word;
+  max-width: 100px;
+  //white-space: normal;
+}
